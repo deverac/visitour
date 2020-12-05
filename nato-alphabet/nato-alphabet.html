@@ -1,0 +1,1572 @@
+<html>
+<head>
+<meta charset="utf-8">
+<style type='text/css'>
+
+    body {
+        margin: 0;
+        padding:0;
+        background: lightgray;
+        font-family: sans-serif;
+    }
+    .lander {
+        fill: #c0c0c0;
+        stroke: #000000;
+        stroke-width: 0.3;
+        fill-rule: evenodd;
+    }
+    div span {
+        font-size: 14pt;
+    }
+    #startBox {
+        border: solid red 1px;
+        position: absolute;
+        z-index: 3;
+        pointer-events: none;
+        visibility: hidden;
+    }
+    #endBox {
+        border: solid green 1px;
+        position: absolute;
+        z-index: 3;
+        pointer-events: none;
+        visibility: hidden;
+    }
+    #spotty {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        background-color: black;
+        z-index: 4;
+        pointer-events: none;
+        display: none;
+    }
+    #mapdisplay {
+        width: 100%;
+        margin-top: 25px;
+        text-align: center;
+    }
+    #svgimg {
+        width: 98%;
+        height: auto;
+        margin: auto auto;
+    }
+    #intext {
+        font-size: 24pt;
+        text-align: center;
+    }
+    #userpanel {
+        text-align: center;
+    }
+    #counter {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    #timer {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    .stat {
+        margin: 20px;
+        font-size: 18pt;
+        background-color: darkgray;
+        color: black;
+        display: inline-block;
+        border-radius: 5px;
+        padding: 3px;
+        border: solid black 1px;
+    }
+    .lander.visited {
+        fill: lightgray;
+    }
+    .lander.nextcc {
+        fill: black;
+    }
+    .panel {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: darkgray;
+        z-index: 5;
+        border-radius: 20px;
+        border: solid black 5px;
+        padding: 20px;
+        display: none;
+    }
+
+
+  .aa { fill: #FF0 }
+  .bb { fill: #FF0 }
+  .cc { fill: #FF0 }
+  .dd { fill: #FF0 }
+  .ee { fill: #FF0 }
+  .ff { fill: #FF0 }
+  .gg { fill: #FF0 }
+  .hh { fill: #FF0 }
+  .ii { fill: #FF0 }
+  .jj { fill: #FF0 }
+  .kk { fill: #FF0 }
+  .ll { fill: #FF0 }
+  .mm { fill: #FF0 }
+  .nn { fill: #FF0 }
+  .oo { fill: #FF0 }
+  .pp { fill: #FF0 }
+  .qq { fill: #FF0 }
+  .rr { fill: #FF0 }
+  .ss { fill: #FF0 }
+  .tt { fill: #FF0 }
+  .uu { fill: #FF0 }
+  .vv { fill: #FF0 }
+  .ww { fill: #FF0 }
+  .xx { fill: #FF0 }
+  .yy { fill: #FF0 }
+  .zz { fill: #FF0 }
+</style>
+<script type="text/javascript">
+var revit = {
+  'alpha': 'g_aa',
+  'bravo': 'g_bb',
+  'charlie': 'g_cc',
+  'delta': 'g_dd',
+  'echo': 'g_ee',
+  'foxtrot': 'g_ff',
+  'golf': 'g_gg',
+  'hotel': 'g_hh',
+  'india': 'g_ii',
+  'juliet': 'g_jj',
+  'kilo': 'g_kk',
+  'lima': 'g_ll',
+  'mike': 'g_mm',
+  'november': 'g_nn',
+  'oscar': 'g_oo',
+  'papa': 'g_pp',
+  'quebec': 'g_qq',
+  'romeo': 'g_rr',
+  'sierra': 'g_ss',
+  'tango': 'g_tt',
+  'uniform': 'g_uu',
+  'victor': 'g_vv',
+  'whisky': 'g_ww',
+  'xray': 'g_xx',
+  'yankee': 'g_yy',
+  'zulu': 'g_zz',
+};
+
+var neighbors = {
+  'aa': ['bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'bb': ['aa', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'cc': ['aa', 'bb', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'dd': ['aa', 'bb', 'cc', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'ee': ['aa', 'bb', 'cc', 'dd', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'ff': ['aa', 'bb', 'cc', 'dd', 'ee', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'gg': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'hh': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'ii': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'jj': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'kk': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'll': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'mm': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'nn': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'oo': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'pp': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'qq': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'rr': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'ss': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'tt': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'uu', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'uu': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'vv', 'ww', 'xx', 'yy', 'zz'],
+  'vv': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'ww', 'xx', 'yy', 'zz'],
+  'ww': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'xx', 'yy', 'zz'],
+  'xx': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'yy', 'zz'],
+  'yy': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'zz'],
+  'zz': ['aa', 'bb', 'cc', 'dd', 'ee', 'ff', 'gg', 'hh', 'ii', 'jj', 'kk', 'll', 'mm', 'nn', 'oo', 'pp', 'qq', 'rr', 'ss', 'tt', 'uu', 'vv', 'ww', 'xx', 'yy'],
+};
+
+var centers = {
+  'aa': {
+    'xc': 0.4375,
+    'yc': 0.6086956521739131,
+  },
+  'bb': {
+    'xc': 0.5476190476190477,
+    'yc': 0.5434782608695652,
+  },
+  'cc': {
+    'xc': 0.2,
+    'yc': 0.6875,
+  },
+  'dd': {
+    'xc': 0.21951219512195122,
+    'yc': 0.1956521739130435,
+  },
+  'ee': {
+    'xc': 0.55,
+    'yc': 0.391304347826087,
+  },
+  'ff': {
+    'xc': 0.5121951219512195,
+    'yc': 0.32608695652173914,
+  },
+  'gg': {
+    'xc': 0.6511627906976745,
+    'yc': 0.7291666666666666,
+  },
+  'hh': {
+    'xc': 0.5609756097560976,
+    'yc': 0.5,
+  },
+  'ii': {
+    'xc': 0.4857142857142857,
+    'yc': 0.1956521739130435,
+  },
+  'jj': {
+    'xc': 0.6428571428571429,
+    'yc': 0.19148936170212766,
+  },
+  'kk': {
+    'xc': 0.4418604651162791,
+    'yc': 0.30434782608695654,
+  },
+  'll': {
+    'xc': 0.30952380952380953,
+    'yc': 0.1956521739130435,
+  },
+  'mm': {
+    'xc': 0.5434782608695652,
+    'yc': 0.5434782608695652,
+  },
+  'nn': {
+    'xc': 0.5,
+    'yc': 0.43478260869565216,
+  },
+  'oo': {
+    'xc': 0.21428571428571427,
+    'yc': 0.22916666666666666,
+  },
+  'pp': {
+    'xc': 0.475,
+    'yc': 0.4782608695652174,
+  },
+  'qq': {
+    'xc': 0.627906976744186,
+    'yc': 0.7818181818181819,
+  },
+  'rr': {
+    'xc': 0.4888888888888889,
+    'yc': 0.43478260869565216,
+  },
+  'ss': {
+    'xc': 0.5,
+    'yc': 0.4791666666666667,
+  },
+  'tt': {
+    'xc': 0.4146341463414634,
+    'yc': 0.30434782608695654,
+  },
+  'uu': {
+    'xc': 0.20930232558139536,
+    'yc': 0.19148936170212766,
+  },
+  'vv': {
+    'xc': 0.574468085106383,
+    'yc': 0.3695652173913043,
+  },
+  'ww': {
+    'xc': 0.44680851063829785,
+    'yc': 0.391304347826087,
+  },
+  'xx': {
+    'xc': 0.5,
+    'yc': 0.32608695652173914,
+  },
+  'yy': {
+    'xc': 0.4523809523809524,
+    'yc': 0.2826086956521739,
+  },
+  'zz': {
+    'xc': 0.4411764705882353,
+    'yc': 0.391304347826087,
+  },
+};
+
+
+class Storage {
+
+    readConfig() {
+        try {
+            return JSON.parse(localStorage.getItem('config'));
+        } catch (err) {
+            return {};
+        }
+    }
+
+    saveConfig(cfg) {
+        localStorage.setItem('config', JSON.stringify(cfg));
+    }
+}
+
+class DOM {
+
+    constructor() {
+        this.isConfigPanelShowing = false;
+        this.isHelpPanelShowing = false;
+        this.isCompletedPanelShowing = false;
+    }
+
+    _getTimer() {
+        return document.querySelector('#timer');
+    }
+
+    hideTimer() {
+        this._getTimer().style.visibility = 'hidden';
+    }
+
+    showTimer() {
+        this._getTimer().style.visibility = 'visible';
+    }
+
+    setTimerText(txt) {
+        var elem = this._getTimer();
+        if (elem) {
+            elem.innerText = txt;
+        }
+    }
+
+    setCompletedHtml(html) {
+        var elem = this._getCompletedText();
+        if (elem) {
+            elem.innerHTML = html;
+        }
+    }
+
+
+    _getCounter() {
+        return document.querySelector('#counter');
+    }
+
+    hideCounter() {
+        this._getCounter().style.visibility = 'hidden';
+    }
+
+    showCounter() {
+        this._getCounter().style.visibility = 'visible';
+    }
+
+    updateCounter(txt) {
+        var ele = this._getCounter();
+        if (ele) {
+            ele.innerText = txt;
+        }
+    }
+
+    _getConfigPanel() {
+        return document.querySelector('#configpanel');
+    }
+
+    openConfigPanel(cfg) {
+        if (this.isHelpPanelShowing || this.isCompletedPanelShowing) {
+            return;
+        }
+        this.isConfigPanelShowing = this._openPanel(this._getConfigPanel());
+    }
+
+    _getConfigPanelSettings() {
+        return {
+            connect:   document.querySelector('#cfgconnect').checked,
+            follow:    document.querySelector('#cfgfollow').checked,
+            hidden:    document.querySelector('#cfghidden').checked,
+            counter:   document.querySelector('#cfgcounter').checked,
+            timer:     document.querySelector('#cfgtimer').checked,
+            spot:      document.querySelector('#cfgspot').checked,
+            fullname:  document.querySelector('#cfgfullname').checked,
+        };
+    }
+
+    closeConfigPanel() {
+        var cfg = this._getConfigPanelSettings();
+        this.isConfigPanelShowing = this._closePanel(this._getConfigPanel());
+        return cfg;
+    }
+
+    _getSuggestElement() {
+        return document.querySelector('#suggest');
+    }
+
+    showSuggestText(val) {
+        var suggest = this._getSuggestElement();
+        if (suggest) {
+            suggest.innerText = val;
+        }
+    }
+
+    _getHelpPanel() {
+        return document.querySelector('#helppanel');
+    }
+
+    _getCompletedPanel() {
+        return document.querySelector('#completedpanel');
+    }
+
+    _getCompletedText() {
+        return document.querySelector('#completedtext');
+    }
+
+    _openPanel(elem) {
+        if (elem) {
+            elem.style.display = 'block';
+            return true;
+        }
+        return false;
+    }
+
+    _closePanel(elem) {
+        // Returns value indicates showing/hidden, not success/error.
+        if (elem) {
+            elem.style.display = 'none';
+            return false;
+        }
+        return true;
+    }
+
+    openHelpPanel() {
+        if (this.isConfigPanelShowing || this.isCompletedPanelShowing) {
+            return;
+        }
+        this.isHelpPanelShowing = this._openPanel(this._getHelpPanel());
+    }
+
+    closeHelpPanel() {
+        this.isHelpPanelShowing = this._closePanel(this._getHelpPanel());
+    }
+
+    toggleHelpPanel() {
+        if (this.isHelpPanelShowing) {
+            this.closeHelpPanel();
+        } else {
+            this.openHelpPanel();
+        }
+    }
+
+    openCompletedPanel() {
+        if (this.isHelpPanelShowing || this.isConfigPanelShowing) {
+            return;
+        }
+        this.isCompletedPanelShowing = this._openPanel(this._getCompletedPanel());
+    }
+
+    closeCompletedPanel() {
+        this.isCompletedPanelShowing = this._closePanel(this._getCompletedPanel());
+    }
+
+    _getInText() {
+        return document.querySelector('#intext');
+    }
+
+    getUserInput() {
+        var elem = this._getInText();
+        if (elem) {
+            return elem.value;
+        }
+        return '';
+    }
+
+    clearUserInput() {
+        var elem = this._getInText();
+        if (elem) {
+            elem.value = '';
+            this.userInputFocus();
+        }
+    }
+
+    userInputFocus() {
+        var elem = this._getInText();
+        if (elem) {
+            elem.focus();
+        }
+    }
+
+    clearAllVisited() {
+        this.removeClass('visited');
+    }
+
+    setVisited(cc) {
+        this.addClass(cc, 'visited');
+    }
+
+    clearAllHighlight() {
+        this.removeClass('nextcc');
+    }
+
+    setHighlight(cc) {
+        this.addClass(cc, 'nextcc');
+    }
+
+    _getId(id) {
+        return document.querySelector('#'+id);
+    }
+
+    hide(gcc) {
+        var elem = this._getId(gcc);
+        if (elem) {
+            elem.style.visibility = 'hidden';
+        }
+    }
+
+    hideAll(cc_ids) {
+        for (let n in cc_ids) {
+            var elem = this._getId('g_'+cc_ids[n]);
+            if (elem) {
+                elem.style.visibility = 'hidden';
+            }
+        }
+    }
+
+    unhide(gcc) {
+        var elem = this._getId(gcc);
+        if (elem) {
+            elem.style.visibility = 'visible';
+        }
+    }
+
+    unhideAll(cc_ids) {
+        for (let n in cc_ids) {
+            var elem = this._getId('g_'+cc_ids[n]);
+            if (elem) {
+                elem.style.visibility = 'visible';
+            }
+        }
+    }
+
+    removeClass(cls) {
+        var elems = document.getElementsByClassName(cls);
+        for (let i = elems.length-1; i >= 0; i--) {
+            elems[i].classList.remove(cls);
+        }
+    }
+
+    addClass(cc, cls) {
+        var elems = document.getElementsByClassName(cc);
+        for (let i = 0; i < elems.length; i++) {
+            elems[i].classList.add(cls);
+        }
+    }
+
+    _getSpot() {
+        return document.querySelector('#spotty');
+    }
+
+    showSpot(left, top) {
+        if (left >= 0 && top >= 0) {
+            var spot = this._getSpot();
+            spot.style.left = left;
+            spot.style.top  = top;
+            spot.style.display = 'block';
+        }
+    }
+
+    hideSpot() {
+        var spot = this._getSpot();
+        spot.style.display = 'none';
+    }
+
+    _getIntext() {
+        return this._getId('intext');
+    }
+
+    setTextOk() {
+        var elem = this._getIntext();
+        if (elem) {
+            elem.style.backgroundColor = 'lightgreen';
+        }
+    }
+
+    setTextBad() {
+        var elem = this._getIntext();
+        if (elem) {
+            elem.style.backgroundColor = 'lightsalmon';
+        }
+    }
+
+    setHelpKeys(keys) {
+        var elem;
+        elem = document.querySelector('#helpKeyComplete');
+        if (elem) {
+            elem.innerText = keys.COMPLETE;
+        }
+        elem = document.querySelector('#helpKeyConfig');
+        if (elem) {
+            elem.innerText = keys.CONFIG;
+        }
+        elem = document.querySelector('#helpKeyEnter');
+        if (elem) {
+            elem.innerText = keys.ENTER;
+        }
+        elem = document.querySelector('#helpKeyHelp');
+        if (elem) {
+            elem.innerText = keys.HELP;
+        }
+        elem = document.querySelector('#helpKeyNeighbor');
+        if (elem) {
+            elem.innerText = keys.NEIGHBORS;
+        }
+    }
+
+}
+
+var KEY = {
+    COMPLETE: ',',
+    CONFIG: '/',
+    ENTER: 'Enter',
+    HELP: '=',
+    NEIGHBORS: '.',
+};
+
+var helpText = "Press '" + KEY.HELP + "' to show help.";
+
+var config = null;
+var timer = null;
+var current_gcc = null;
+var target_gcc = null;
+var nextcc = null;
+
+var num_incorrect = 0;
+var num_correct = 0;
+
+var isZoomedOut = true;
+var isComplete = false;
+
+var start_date = null;
+var duration = 0;
+
+var revit_keys = Object.keys(revit);
+var gcc_to_name = {};
+var visited = {};
+var directed_graph = [];
+
+var dom = new DOM();
+var storage = new Storage();
+
+
+function getSvgDims() {
+    var svgimg = document.querySelector('#svgimg');
+    return {
+        'width': svgimg.getAttribute('width'),
+        'height': svgimg.getAttribute('height'),
+    };
+}
+
+function getSvgRect() {
+    var svgimg = document.querySelector('#svgimg');
+    return svgimg.getBoundingClientRect(); // Actual pixel size in browser
+};
+
+function getViewbox() {
+    var svgimg = document.querySelector('#svgimg');
+    var vbAry = svgimg.getAttribute('viewBox').split(/ +/g);
+    var x = parseFloat(vbAry[0]);
+    var y = parseFloat(vbAry[1]);
+    var width = parseFloat(vbAry[2]);
+    var height = parseFloat(vbAry[3]);
+    return {'x': x, 'y': y, 'width': width, 'height': height };
+}
+
+function setViewbox(x, y, w, h) {
+    var svgimg = document.querySelector('#svgimg');
+    svgimg.setAttribute('viewBox', x + ' ' + y + ' '+ w + ' ' + h);
+}
+
+function getBoundingBoxOfCountry(gcc) {
+    var ele = document.getElementById(gcc);
+    if (ele) {
+        return ele.getBBox();
+    }
+    return { 'x': 0, 'y': 0, 'width': 0, 'height': 0 };
+}
+
+function closeHelp() {
+    dom.closeHelpPanel();
+    dom.userInputFocus();
+}
+
+function closeCompleted() {
+    dom.closeCompletedPanel();
+    dom.userInputFocus();
+}
+
+function restart() {
+    location.reload()
+}
+
+function closeConfig() {
+    var cfg = dom.closeConfigPanel();
+    var connectedChanged = cfg.connect != config.connect;
+    var followChanged    = cfg.follow  != config.follow;
+    var hiddenChanged    = cfg.hidden  != config.hidden;
+
+    config.counter   = cfg.counter;
+    config.timer     = cfg.timer;
+    config.spot      = cfg.spot;
+    config.fullname  = cfg.fullname;
+    config.connect   = cfg.connect;
+    config.follow    = cfg.follow;
+    config.hidden    = cfg.hidden;
+
+    storage.saveConfig(config);
+    if (connectedChanged || followChanged || hiddenChanged) {
+        restart();
+    }
+    dom.userInputFocus();
+}
+
+function openConfig() {
+    dom.openConfigPanel(config);
+}
+
+function drawSpot() {
+    if (target_gcc) {
+        var box = computeStartBox();
+
+        var c2 = target_gcc.substring(2)
+        var xcm = centers[c2]['xc'];
+        var ycm = centers[c2]['yc'];
+
+        var left = box.x + (box.width * xcm);
+        var top  = box.y + (box.height * ycm);
+        dom.showSpot(left, top)
+    }
+}
+
+function drawStartBox() {
+    var box = computeStartBox();
+    var startbox = document.querySelector('#startBox');
+    startbox.style.visibility = (config.debug ? 'visible' : 'hidden');
+    startbox.style.left   = box.x;
+    startbox.style.top    = box.y;
+    startbox.style.width  = box.width;
+    startbox.style.height = box.height;
+}
+
+function computeStartBox() {
+    var svgRect = getSvgRect();
+    var vb = getViewbox();
+    var svgScale = svgRect.width / (vb.width );
+    var n = getBoundingBoxOfCountry(target_gcc);
+    return {
+        'x': svgRect.x + ((n.x - vb.x) * svgScale),
+        'y': svgRect.y + ((n.y - vb.y) * svgScale),
+        'width': n.width * svgScale,
+        'height': n.height * svgScale,
+    }
+}
+
+function drawEndBox() {
+    var box = computeEndBox();
+    var endbox = document.querySelector('#endBox');
+    endbox.style.visibility = (config.debug ? 'visible' : 'hidden');
+    endbox.style.left   = box.x;
+    endbox.style.top    = box.y;
+    endbox.style.width  = box.width;
+    endbox.style.height = box.height;
+}
+
+function computeEndBox() {
+    target_scale = 1.6;
+    var svgRect = getSvgRect();
+    var n = getBoundingBoxOfCountry(target_gcc);
+
+    return {
+        'x': svgRect.x + (svgRect.width - (n.width * target_scale)) / 2,
+        'y': svgRect.y + (svgRect.height - (n.height * target_scale)) / 2,
+        'width': n.width * target_scale,
+        'height': n.height * target_scale,
+    }
+}
+
+function transitionTo() {
+    var vbox = getViewbox();
+
+    var newX = vbox.x;
+    var newY = vbox.y;
+    var newWidth = vbox.width;
+    var newHeight = vbox.height;
+
+    if (isZoomedOut) {
+
+        if (Math.abs(newX) < 1) {
+        } else if (newX > 0) {
+            newX -= newX * 0.1;
+            if (newX < 0) newX = 0;
+        } else if (newX < 0) {
+            newX -= newX * 0.1;
+            if (newX > 0) newX = 0;
+        }
+
+        if (Math.abs(newY) < 1) {
+        } else if (newY > 0) {
+            newY -= newY * 0.1;
+            if (newY < 0) ny = 0;
+        } else if (newY < 0) {
+            newY -= newY * 0.1;
+            if (newY > 0) newY = 0;
+        }
+        var dims = getSvgDims();
+        if (newWidth < dims.width) {
+            newWidth += (dims.width - newWidth) * 0.1
+        }
+        if (newWidth > dims.width) {
+            newWidth = dims.width;
+        }
+        if (newHeight < dims.height) {
+            newHeight += (dims.height - newHeight) * 0.1
+        }
+        if (newHeight > dims.height) {
+            newHeight = dims.height;
+        }
+    } else {
+        var svgRect = getSvgRect();
+
+        var sbox = computeStartBox();
+        var ebox = computeEndBox();
+        var bbox = getBoundingBoxOfCountry(target_gcc);
+
+        var srcX = vbox.x;
+        var srcY = vbox.y;
+        var srcWidth = vbox.width;
+        var srcHeight = vbox.height;
+
+        var diffScale = ebox.width / sbox.width;
+        var tgtWidth = vbox.width / diffScale;
+        var tgtHeight = vbox.height / diffScale;
+        var tgtX = (bbox.x - tgtWidth/2  + bbox.width/2);
+        var tgtY = (bbox.y - tgtHeight/2  + bbox.height/2);
+
+        newWidth = srcWidth + (tgtWidth - srcWidth) * 0.1;
+        newHeight = srcHeight + (tgtHeight - srcHeight) * 0.1;
+        newX = srcX + (tgtX - srcX) * 0.1;
+        newY = srcY + (tgtY - srcY) * 0.1;
+    }
+    setViewbox(newX, newY, newWidth, newHeight);
+    if (config.debug) {
+        drawStartBox();
+        drawEndBox();
+    }
+    if (config.spot) {
+        drawSpot();
+    }
+    if (! isComplete) {
+        updateTimer();
+    }
+    timer = setTimeout(transitionTo, 50);
+}
+
+
+function boxit(gcc) {
+    target_gcc = gcc;
+    timer = setTimeout(transitionTo, 1);
+}
+
+function findMatches(val) {
+    var lowerVal = val.toLowerCase();
+    var exact = lowerVal.endsWith(' ') || config.fullname;
+    lowerVal = lowerVal.trim();
+    var matches = [];
+    for (k in revit_keys) {
+        if (exact && revit_keys[k] == lowerVal ) {
+            matches.push(revit_keys[k]);
+            break;
+        } else if (revit_keys[k].startsWith(lowerVal) && ! exact) {
+            matches.push(revit_keys[k]);
+        }
+    }
+    return matches;
+}
+
+function isNeighbor(cur, tgt, isGroupIds) {
+    if (cur == null) {
+        return true;
+    }
+    if (isGroupIds) {
+        // Remove 'g_' prefix from cur and tgt.
+        return neighbors[cur.substring(2)].includes(tgt.substring(2));
+    }
+    return neighbors[cur].includes(tgt);
+}
+
+function handleTimerChange(ele) {
+    if (ele.checked) {
+        dom.showTimer();
+    } else {
+        dom.hideTimer();
+    }
+}
+
+function handleSpotChange(ele) {
+    config.spot = ele.checked
+    if (ele.checked) {
+        dom.showSpot(-1, -1);
+    } else {
+        dom.hideSpot();
+    }
+}
+
+function handleHiddenChange(ele) {
+    config.hidden = ele.checked;
+    var keys = Object.keys(neighbors);
+    if (ele.checked) {
+        dom.hideAll(keys);
+    } else {
+        dom.unhideAll(keys);
+    }
+}
+
+function handleCounterChange(ele) {
+    if (ele.checked) {
+        dom.showCounter();
+    } else {
+        dom.hideCounter();
+    }
+}
+
+function handleKeyDown(evt) {
+    var name = evt.key;
+    if (name == KEY.ENTER) {
+        var txt = dom.getUserInput();
+        if (txt == '') {
+            isZoomedOut = ! isZoomedOut;
+            return;
+        }
+
+        var mat = findMatches(txt);
+        if (mat.length == 1) {
+            var moveToNext = false;
+            // clearTimeout(timer);
+            var gcc = revit[mat[0]];
+
+            if (config.connect) {
+
+                if (isNeighbor(current_gcc, gcc, true)) {
+                    if (config.follow) {
+                        if (nextcc == gcc.substring(2)) {
+                            moveToNext = true;
+                        }
+                    } else {
+                        moveToNext = true;
+                    }
+                }
+
+            } else {
+
+                if (config.follow) {
+                    if (gcc.substring(2) == nextcc) {
+                        moveToNext = true;
+                    }
+                } else {
+                    moveToNext = true;
+                }
+
+            }
+            if (moveToNext) {
+                clearTimeout(timer);
+                current_gcc = gcc;
+                setAaVisited(gcc);
+                num_correct++;
+
+                dom.updateCounter(countVisitedCountries() + '/' + countTotalCountries());
+                if (countVisitedCountries() == countTotalCountries()) {
+                    if (! isComplete) {
+                        var pct = (1 - num_incorrect/num_correct) * 100;
+                        dom.setCompletedHtml('Incorrect: ' + num_incorrect + '<br>Correct: ' + num_correct + '<br>Ratio: ' + pct.toFixed(2) + '%<br>');
+                        dom.openCompletedPanel();
+                    }
+                    dom.hideSpot();
+                    isComplete = true;
+                }
+
+                if (config.follow) {
+                    dom.clearAllHighlight(gcc.substring(2))
+                    if (config.hidden) {
+                        dom.hide(gcc);
+                    }
+                    nextcc = directed_graph.shift();
+                    if (nextcc) {
+                        if (config.hidden) {
+                            dom.unhide('g_'+nextcc);
+                        }
+                        dom.setHighlight(nextcc);
+                        boxit('g_'+nextcc);
+                    }
+                } else {
+                    boxit(gcc);
+                }
+                dom.setTextOk();
+                dom.clearUserInput();
+                dom.userInputFocus();
+            } else {
+                dom.setTextBad();
+                num_incorrect++;
+            }
+        } else {
+            num_incorrect++;
+            dom.setTextBad();
+        }
+        dom.showSuggestText(helpText);
+    } else if (name == KEY.COMPLETE) {
+        evt.preventDefault();
+        showCompletions();
+    } else if (name == KEY.NEIGHBORS) {
+        evt.preventDefault();
+        showNeighbors();
+    } else if (name == KEY.CONFIG) {
+        evt.preventDefault();
+        if (dom.isConfigPanelShowing) {
+            closeConfig();
+        } else {
+            openConfig();
+        }
+    } else if (name == KEY.HELP) {
+        evt.preventDefault();
+        dom.toggleHelpPanel();
+    } else {
+        dom.setTextOk();
+        dom.showSuggestText(helpText);
+    }
+}
+
+
+function setAaVisited(gNodeId) {
+    var nodeId = gNodeId.substring(2);
+    visited[nodeId] = 1;
+    dom.setVisited(nodeId);
+}
+
+function isVisited(nodeId) {
+    return visited[nodeId] == 1;
+}
+
+function countVisitedCountries() {
+    var count = 0;
+    for (nodeId in visited) {
+        if (isVisited(nodeId)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function countTotalCountries() {
+    return Object.keys(visited).length;
+}
+
+
+function zpad(n) {
+    return (n < 10) ? '0' + n : n;
+}
+
+function updateTimer() {
+    if (start_date) {
+        var duration_secs = parseInt((Date.now() - start_date) / 1000);
+        if (duration_secs != duration) {
+            var seconds = Math.floor((duration_secs ) % 60);
+            var minutes = Math.floor((duration_secs / ( 60)) % 60);
+            var hours = Math.floor((duration_secs / ( 60 * 60)));
+
+            duration = duration_secs;
+
+            var txt = minutes;
+            if (hours > 0) {
+                txt = hours + ':' + zpad(minutes);
+            }
+            dom.setTimerText(txt + ':' + zpad(seconds));
+        }
+    } else {
+        start_date = Date.now();
+    }
+}
+
+function showNeighbors() {
+    if (current_gcc) {
+        var nbrs = neighbors[current_gcc.substring(2)];
+        var names = [];
+        for (let i=0; i<nbrs.length; i++) {
+            names.push(gcc_to_name['g_'+nbrs[i]]);
+        }
+        dom.showSuggestText(names.join(', '));
+    }
+}
+
+function showCompletions() {
+    var val = dom.getUserInput();
+    var v = val.trim();
+    if (v.length > 1) {
+        var mat = findMatches(v);
+        dom.showSuggestText(mat.join(', '));
+    }
+}
+
+function construct_gcc_to_name() {
+    for (let key in revit) {
+        var val = revit[key];
+        gcc_to_name[val] = key;
+    }
+}
+
+function construct_visited() {
+    for (let key in neighbors) {
+        visited[key] = 0;
+    }
+}
+
+function shuffle_array(ary) {
+    var j, tmp;
+    var shuf = [];
+    for (let i = 0; i < ary.length; i++) {
+        shuf[i] = ary[i];
+    }
+
+    for (let i = shuf.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        tmp = shuf[i];
+        shuf[i] = shuf[j];
+        shuf[j] = tmp;
+    }
+    return shuf;
+}
+
+function construct_directed_graph() {
+    var stack = [];
+    var path = [];
+    var vst = {};
+    var nbrs = {};
+
+    for (let key in neighbors) {
+        vst[key] = 0;
+    }
+
+    for (let key in neighbors) {
+        nbrs[key] = shuffle_array(neighbors[key]);
+    }
+
+    var country_codes = Object.keys(nbrs);
+    var country_code = country_codes[Math.floor(Math.random() * country_codes.length)];
+
+    vst[country_code] = 0;
+    stack.push(country_code);
+    path.push(country_code);
+    while (stack.length) {
+        var cd = stack[stack.length - 1];
+        var opts = nbrs[cd];
+        var n = vst[cd];
+        if (n >= opts.length) { // all visited
+            stack.pop();
+            if (stack.length) {
+                path.push(stack[stack.length - 1]);
+            }
+            continue;
+        } else {
+            var newcd = opts[n];
+            if (vst[newcd] == 0) { // not visited
+                path.push(newcd);
+                stack.push(newcd);
+            }
+            vst[cd]++;
+        }
+    }
+
+    directed_graph = path;
+}
+
+function construct_random_graph() {
+    directed_graph = shuffle_array(Object.keys(neighbors));
+}
+
+function start() {
+    dom.setTextOk();
+    dom.clearUserInput();
+    dom.showSuggestText(helpText);
+    dom.setHelpKeys(KEY);
+
+    construct_gcc_to_name();
+    construct_visited();
+    dom.updateCounter(countVisitedCountries() + '/' + countTotalCountries());
+
+    if (config.connect) {
+        construct_directed_graph();
+        shorten_path();
+    } else {
+        construct_random_graph();
+    }
+
+    if (config.hidden) {
+        dom.hideAll(Object.keys(neighbors))
+    }
+
+    if (config.follow) {
+        nextcc = directed_graph.shift();
+        if (nextcc) {
+            dom.unhide('g_'+nextcc);
+            dom.setHighlight(nextcc);
+            boxit('g_'+nextcc)
+        }
+    }
+
+    if (config.auto) {
+        setTimeout(autoMoveToNextTarget, 1000);
+    }
+}
+
+function getDefaultConfig() {
+    return {
+        counter: true,
+        timer: true,
+        spot: true,
+        fullname: false,
+
+        connect: false,
+        follow: false,
+        hidden: false,
+    };
+}
+
+function parseBool(str) {
+    return (str.toLowerCase() == 'true' || str == '1');
+}
+
+function parseQueryString(qrystr) {
+    if (qrystr) {
+        var keyvals = qrystr.substring(1).split('&');
+        for (i in keyvals) {
+            var kv = keyvals[i].split('=');
+            if (kv.length == 2) {
+                var key = kv[0];
+                var val = kv[1];
+                if (key == 'debug') {
+                    config.debug = parseBool(val);
+                } else if (key == 'auto') {
+                    config.auto = parseBool(val);
+                } else if (key == 'counter') {
+                    config.counter = parseBool(val);
+                } else if (key == 'timer') {
+                    config.timer = parseBool(val);
+                } else if (key == 'spot') {
+                    config.spot = parseBool(val);
+                } else if (key == 'fullname') {
+                    config.fullname = parseBool(val);
+                } else if (key == 'connect') {
+                    config.connect = parseBool(val);
+                } else if (key == 'follow') {
+                    config.follow = parseBool(val);
+                } else if (key == 'hide') {
+                    config.hidden = parseBool(val);
+                }
+            }
+        }
+    }
+}
+
+function init() {
+    config = storage.readConfig();
+    if (Object.keys(config).length == 0) {
+        config = getDefaultConfig();
+    }
+    parseQueryString(location.search);
+    start();
+}
+
+
+function typeName(nam) {
+    document.querySelector('#intext').value = nam + ' ';
+    handleKeyDown({ 'key': 'Enter' });
+}
+
+function autoMoveToNextTarget() {
+    var cc = (config.follow ? nextcc : directed_graph.shift());
+    if (cc) {
+        var nam = gcc_to_name['g_'+cc];
+        typeName(nam);
+        setTimeout(autoMoveToNextTarget, 500);
+    }
+}
+
+
+function reroute(a, m, z) {
+    var rr = [];
+    rr.push(a);
+    for (var i=0; i<m.length; i++) {
+        rr.push(m[i]);
+    }
+    rr.push(z);
+    var kk = [];
+    var highest = -1;
+    for (var k=rr.length; k>=3; k--) {
+        for (var n=0; n+k-1<rr.length; n++) {
+            if (isNeighbor(rr[n], rr[n+k-1], false)) {
+                if (n >= highest) {
+                    highest = n+k-1;
+                    kk.push(n);
+                    kk.push((n+k-1));
+                }
+            }
+        }
+    }
+
+    var cnt = 0;
+    var zz = [];
+    var finaln = 0;
+    while (true) {
+        if (cnt <= kk[0]) {
+            zz.push(rr[cnt]);
+        } else {
+            if (kk.length) {
+                kk.shift();
+                cnt = kk.shift();
+                finaln = cnt;
+                cnt--;
+            }
+        }
+        if (cnt >= rr.length) {
+            break;
+        }
+        cnt++;
+    }
+    for (var i=finaln; i<rr.length; i++) {
+        zz.push(rr[i]);
+    }
+    return zz.slice(1, zz.length-1);
+}
+
+function shorten_path() {
+    var prevcc = null;
+    var ulinks = [];
+    var vlinks = [];
+    var vst = {};
+    var newpath = [];
+
+    for (let key in neighbors) {
+        vst[key] = 0;
+    }
+
+    for (let x in directed_graph) {
+        var cc = directed_graph[x];
+        if (vst[cc] == 0) {
+            if (vlinks.length) {
+                var rt = reroute(prevcc, vlinks, cc);
+                newpath = newpath.concat(rt);
+                prevcc = null;
+                vlinks = [];
+            }
+            ulinks.push(cc);
+        } else {
+            if (ulinks.length) {
+                prevcc = ulinks[ulinks.length - 1];
+                newpath = newpath.concat(ulinks);
+                ulinks = [];
+            }
+            vlinks.push(cc);
+        }
+        vst[cc]++;
+    }
+    directed_graph = newpath;
+}
+
+</script>
+</head>
+<body onload="init()">
+<div id='endBox'>&nbsp;</div>
+<div id='startBox'>&nbsp;</div>
+<div id='spotty'>&nbsp;</div>
+<div id="mapdisplay">
+<svg width="203.0" height="25.0" id="svgimg" viewBox="0 0  203.0 25.0" xmlns="http://www.w3.org/2000/svg">
+<path id="background" style="fill:#808b96" stroke="black" d="M0,0 203,0 203,25 0,25 z" />
+
+    <g id="g_aa" class="g_aa">
+        <title>Alpha</title>
+        <path id="al" class="lander aa" d="M 11.457108,10.532842 9.5728881,15.52716 c -0.045403,0 -0.090806,0 -0.1362087,0 -0.3745739,0 -0.5221333,0.09081 -0.5221333,0.385925 0,0.340521 0.1589101,0.397275 0.5788869,0.397275 h 1.452893 c 0.431327,0 0.646991,-0.03405 0.646991,-0.397275 0,-0.317821 -0.204313,-0.385925 -0.635641,-0.385925 h -0.533484 l 0.476731,-1.316684 h 2.814979 l 0.533484,1.316684 h -0.510783 c -0.431327,0 -0.624289,0.0681 -0.624289,0.385925 0,0.363223 0.215663,0.397275 0.658342,0.397275 h 1.509646 c 0.363223,0 0.499432,-0.07945 0.499432,-0.397275 0,-0.30647 -0.136209,-0.385925 -0.522134,-0.385925 -0.03405,0 -0.05675,0 -0.09081,0 L 13.000806,10.112865 C 12.853247,9.7496419 12.705688,9.7382912 12.387867,9.7382912 h -1.57775 c -0.522133,0 -0.771849,0 -0.771849,0.3972748 0,0.30647 0.192962,0.397276 0.612939,0.397276 z m -0.283768,2.939837 1.066968,-2.939837 1.203177,2.939837 z" />
+    </g>
+    <g id="g_bb" class="g_bb">
+        <title>Bravo</title>
+        <path id="br" class="lander bb" d="m 19.079828,16.31036 c 0.136209,0 0.272417,0 0.397275,0 0.692395,0 1.293983,-0.03405 1.850168,-0.442678 0.46538,-0.351873 0.726447,-0.874006 0.726447,-1.452893 0,-0.79455 -0.374574,-1.305333 -1.180476,-1.589101 0.499432,-0.283768 0.749148,-0.726446 0.749148,-1.305333 0,-1.135073 -0.805901,-1.7820638 -2.406353,-1.7820638 h -2.587965 c -0.249716,0 -0.385925,0.1362087 -0.385925,0.3972748 0,0.363224 0.192963,0.397276 0.669693,0.397276 h 0.181612 v 4.994318 h -0.192963 c -0.488081,0 -0.692394,0.01135 -0.692394,0.385925 0,0.261066 0.124858,0.397275 0.385925,0.397275 z m -1.112371,-3.734388 v -2.04313 h 1.373438 c 0.874005,0 1.328034,0.374574 1.328034,1.021565 0,0.703745 -0.510782,1.021565 -1.543698,1.021565 z m 0,2.951188 v -2.270145 h 1.282632 c 1.214527,0 1.838817,0.227015 1.838817,1.135073 0,0.885356 -0.62429,1.135072 -1.895571,1.135072 z" />
+    </g>
+    <g id="g_cc" class="g_cc">
+        <title>Charlie</title>
+        <path id="ch" class="lander cc" d="M 27.724113,9.9199028 C 27.190629,9.6928883 26.691197,9.5680303 26.180415,9.5680303 c -1.838817,0 -3.178203,1.4869447 -3.178203,3.4619707 0,2.031779 1.362087,3.439269 3.155501,3.439269 0.715096,0 1.305334,-0.192962 1.918273,-0.590238 0.408626,-0.261066 0.624289,-0.442678 0.624289,-0.692394 0,-0.227014 -0.17026,-0.397275 -0.408626,-0.397275 -0.192962,0 -0.419976,0.249716 -0.7832,0.454029 -0.431327,0.238365 -0.896707,0.363223 -1.305333,0.363223 -1.237229,0 -2.190689,-0.964811 -2.190689,-2.576614 0,-1.748011 0.885356,-2.712823 2.167988,-2.712823 0.737797,0 1.305333,0.408626 1.441542,0.930759 0.124858,0.499432 0.0681,0.77185 0.544834,0.77185 0.329171,0 0.397276,-0.14756 0.397276,-0.442679 0,-0.07946 -0.0227,-0.522133 -0.0227,-1.373437 0,-0.3859248 -0.0227,-0.5561856 -0.408626,-0.5561856 -0.215664,0 -0.329171,0.079455 -0.408626,0.2724174 z" />
+    </g>
+    <g id="g_dd" class="g_dd">
+        <title>Delta</title>
+        <path id="de" class="lander dd" d="m 31.476237,16.31036 c 0.283768,0 0.544835,0.0227 0.7832,0.0227 1.157774,0 1.952324,-0.215663 2.542562,-0.828602 0.590238,-0.612939 0.919408,-1.475594 0.919408,-2.474458 0,-2.04313 -1.203176,-3.2917098 -3.019292,-3.2917098 -0.215664,0 -0.62429,0 -1.225878,0 h -0.874006 c -0.442678,0 -0.658342,0.022701 -0.658342,0.3972748 0,0.30647 0.15891,0.397276 0.533484,0.397276 0.0454,0 0.09081,0 0.136209,0 v 4.994318 c -0.05675,0 -0.102157,0 -0.147559,0 -0.374574,0 -0.522134,0.07945 -0.522134,0.385925 0,0.261066 0.136209,0.397275 0.408626,0.397275 0.113508,0 0.181612,0 0.249716,0 z m 0,-0.7832 v -4.994318 c 0.227014,-0.0227 0.442678,-0.0227 0.646991,-0.0227 1.861519,0 2.678771,0.749148 2.678771,2.519861 0,1.748011 -0.817252,2.531211 -2.633368,2.531211 -0.215664,0 -0.454029,-0.01135 -0.692394,-0.03405 z" />
+    </g>
+    <g id="g_ee" class="g_ee">
+        <title>Echo</title>
+        <path id="ec" class="lander ee" d="m 37.260139,16.31036 h 4.574342 c 0.249716,0 0.385924,-0.147559 0.385924,-0.408626 v -1.396139 c 0,-0.374574 -0.0681,-0.544835 -0.385924,-0.544835 -0.363223,0 -0.397276,0.204313 -0.397276,0.669693 v 0.896707 h -2.951188 v -2.451756 h 1.452893 c 0,0.05675 0,0.113507 0,0.15891 0,0.47673 0.05675,0.681043 0.351872,0.681043 0.329171,0 0.351873,-0.204313 0.351873,-0.646991 V 12.23545 c 0,-0.454029 -0.0454,-0.658342 -0.351873,-0.658342 -0.283768,0 -0.363223,0.15891 -0.363223,0.533484 0,0.0227 0.01135,0.124858 0.01135,0.295119 h -1.452893 v -1.872869 h 2.951188 v 0.79455 c 0,0.102157 0,0.158911 0,0.181612 0,0.340522 0.102157,0.488081 0.397276,0.488081 0.306469,0 0.385924,-0.15891 0.385924,-0.510782 v -1.305334 c 0,-0.2951184 -0.136208,-0.4426778 -0.385924,-0.4426778 h -4.574342 c -0.442678,0 -0.669692,0.022701 -0.669692,0.3972748 0,0.351873 0.192962,0.397276 0.669692,0.397276 h 0.351873 v 4.994318 h -0.351873 c -0.47673,0 -0.669692,0.03405 -0.669692,0.385925 0,0.261066 0.136208,0.397275 0.408626,0.397275 0.113507,0 0.204313,0 0.261067,0 z" />
+    </g>
+    <g id="g_ff" class="g_ff">
+        <title>Foxtrot</title>
+        <path id="fo" class="lander ff" d="m 46.415206,15.52716 h -0.964811 v -2.451756 h 1.464243 c 0,0.05675 0,0.113507 0,0.15891 0,0.47673 0.05675,0.681043 0.351873,0.681043 0.272417,0 0.340521,-0.147559 0.340521,-0.488081 v -1.407489 c 0,-0.30647 -0.102156,-0.442679 -0.340521,-0.442679 -0.295119,0 -0.351873,0.204313 -0.351873,0.681044 0,0.0454 0,0.102156 0,0.147559 h -1.464243 v -1.872869 h 3.007942 v 0.79455 c 0,0.102157 0,0.158911 0,0.181612 0,0.340522 0.102156,0.488081 0.397275,0.488081 0.261067,0 0.385925,-0.136209 0.385925,-0.385924 v -1.430192 c 0,-0.2951184 -0.136209,-0.4426778 -0.385925,-0.4426778 h -4.903513 c -0.249715,0 -0.385924,0.1362087 -0.385924,0.3972748 0,0.272418 0.136209,0.397276 0.442678,0.397276 0.03405,0 0.102157,0 0.215664,0 h 0.351872 v 4.994318 h -0.351872 c -0.102157,0 -0.15891,0 -0.181612,0 -0.340521,0 -0.47673,0.09081 -0.47673,0.385925 0,0.261066 0.136209,0.397275 0.385924,0.397275 h 2.735525 c 0.249716,0 0.385924,-0.136209 0.385924,-0.397275 0,-0.272418 -0.136208,-0.385925 -0.442678,-0.385925 -0.03405,0 -0.102156,0 -0.215664,0 z" />
+    </g>
+    <g id="g_gg" class="g_gg">
+        <title>Golf</title>
+        <path id="go" class="lander gg" d="m 55.048142,15.356899 c -0.499432,0.227015 -0.94211,0.351873 -1.384788,0.351873 -1.373438,0 -2.395003,-1.010215 -2.395003,-2.678771 0,-1.748011 0.874006,-2.724174 2.167989,-2.724174 0.681043,0 1.214527,0.351873 1.475594,0.919409 0.124857,0.261067 0.136208,0.510782 0.488081,0.510782 0.31782,0 0.419976,-0.136208 0.419976,-0.488081 0,-0.295118 0,-0.544834 0,-0.749147 0,-0.6583423 -0.0454,-0.874006 -0.431327,-0.874006 -0.215664,0 -0.329171,0.090806 -0.408626,0.2724173 -0.533484,-0.2270145 -1.032916,-0.3405217 -1.543698,-0.3405217 -1.850168,0 -3.178203,1.4982954 -3.178203,3.4733214 0,2.065832 1.305333,3.45062 3.314411,3.45062 0.953461,0 1.793414,-0.249716 2.145287,-0.454029 0.15891,-0.09081 0.170261,-0.15891 0.170261,-0.31782 0,-0.0454 0,-0.09081 0,-0.136209 v -1.532348 c 0.0227,0 0.0454,0 0.0681,0 0.31782,0 0.419977,-0.0908 0.419977,-0.363223 0,-0.249716 -0.09081,-0.363223 -0.283768,-0.363223 h -2.395003 c -0.272417,0 -0.351872,0.07945 -0.351872,0.363223 0,0.238365 0.102156,0.363223 0.31782,0.363223 h 1.384788 z" />
+    </g>
+    <g id="g_hh" class="g_hh">
+        <title>Hotel</title>
+        <path id="ho" class="lander hh" d="m 58.788912,15.52716 v -2.304197 h 2.65607 v 2.304197 c -0.102157,0 -0.192963,0 -0.272418,0 -0.488081,0 -0.692394,0.0681 -0.692394,0.385925 0,0.374574 0.227015,0.397275 0.692394,0.397275 h 1.135073 c 0.454029,0 0.669692,-0.0227 0.669692,-0.397275 0,-0.30647 -0.147559,-0.385925 -0.522133,-0.385925 -0.0454,0 -0.09081,0 -0.147559,0 v -4.994318 c 0.0454,0 0.09081,0 0.136208,0 0.374574,0 0.533484,-0.09081 0.533484,-0.397276 0,-0.2610661 -0.136208,-0.3972748 -0.408626,-0.3972748 -0.124858,0 -0.215663,0 -0.261066,0 h -1.08967 c -0.499432,0 -0.737797,0 -0.737797,0.3972748 0,0.295119 0.181612,0.397276 0.590238,0.397276 0.249716,0 0.374574,0 0.374574,0 v 1.929623 h -2.65607 v -1.929623 c 0.09081,0 0.170261,0 0.249716,0 0.499432,0 0.715096,-0.06811 0.715096,-0.397276 0,-0.3745734 -0.215664,-0.3972748 -0.681043,-0.3972748 h -1.157774 c -0.442678,0 -0.658342,0.022701 -0.658342,0.3972748 0,0.30647 0.15891,0.397276 0.533484,0.397276 0.0454,0 0.09081,0 0.136208,0 v 4.994318 c -0.05675,0 -0.102156,0 -0.147559,0 -0.374574,0 -0.522133,0.07945 -0.522133,0.385925 0,0.261066 0.136208,0.397275 0.408626,0.397275 0.113507,0 0.181611,0 0.249716,0 h 1.214527 c 0.419977,0 0.62429,-0.0454 0.62429,-0.397275 0,-0.295119 -0.181612,-0.397276 -0.590238,-0.397276 -0.249716,0 -0.374574,0.01135 -0.374574,0.01135 z" />
+    </g>
+    <g id="g_ii" class="g_ii">
+        <title>India</title>
+        <path id="in" class="lander ii" d="m 68.625025,15.52716 h -1.24858 v -4.994318 h 1.24858 c 0.47673,0 0.669693,-0.0454 0.669693,-0.397276 0,-0.2610661 -0.136209,-0.3972748 -0.408626,-0.3972748 -0.124858,0 -0.215664,0 -0.261067,0 h -3.359814 c -0.442678,0 -0.669693,0.022701 -0.669693,0.3972748 0,0.351873 0.192962,0.397276 0.669693,0.397276 h 1.237229 v 4.994318 h -1.237229 c -0.476731,0 -0.669693,0.03405 -0.669693,0.385925 0,0.261066 0.136209,0.397275 0.408626,0.397275 0.06811,0 0.15891,0 0.261067,0 h 3.359814 c 0.454029,0 0.669693,-0.0227 0.669693,-0.397275 0,-0.351873 -0.192963,-0.385925 -0.669693,-0.385925 z" />
+    </g>
+    <g id="g_jj" class="g_jj">
+        <title>Juliet</title>
+        <path id="ju" class="lander jj" d="m 74.613242,10.532842 v 3.405217 c 0,1.248579 -0.397275,1.827466 -1.452892,1.827466 -0.703745,0 -1.191826,-0.374574 -1.350736,-0.94211 -0.05675,-0.238365 -0.06811,-0.454029 -0.06811,-0.63564 0,-0.0227 0,-0.0454 0,-0.05675 0,-0.170261 0,-0.306469 -0.0454,-0.408626 -0.05675,-0.124858 -0.181611,-0.204313 -0.363223,-0.204313 -0.363223,0 -0.363223,0.215664 -0.363223,0.578887 v 1.305333 c 0,0.31782 0.0227,0.419977 0.30647,0.578887 0.612939,0.329171 1.237228,0.488081 1.940973,0.488081 1.657206,0 2.270145,-0.760498 2.270145,-2.395003 v -3.541425 h 0.715095 c 0.476731,0 0.658342,-0.0454 0.658342,-0.397276 0,-0.2610661 -0.124858,-0.3972748 -0.397275,-0.3972748 -0.113507,0 -0.204313,0 -0.261067,0 h -3.087396 c -0.442679,0 -0.669693,0.022701 -0.669693,0.3972748 0,0.351873 0.192962,0.397276 0.669693,0.397276 z" />
+    </g>
+    <g id="g_kk" class="g_kk">
+        <title>Kilo</title>
+        <path id="ki" class="lander kk" d="m 79.466383,15.52716 v -1.736661 l 0.612939,-0.578886 c 0.544835,0.07945 0.976163,0.522133 1.430191,1.350736 0.510783,0.930759 0.7832,1.441541 0.839954,1.532347 0.102156,0.170261 0.170261,0.215664 0.419977,0.215664 h 0.533484 c 0.249716,0 0.385924,-0.136209 0.385924,-0.397275 0,-0.30647 -0.147559,-0.385925 -0.522133,-0.385925 -0.0454,0 -0.102156,0 -0.15891,0 -0.919409,-1.736661 -1.486945,-2.746875 -2.326898,-2.917136 l 2.145286,-2.077182 c 0.03405,0 0.05675,0 0.09081,0 0.408626,0 0.578887,-0.07946 0.578887,-0.397276 0,-0.2610661 -0.136209,-0.3972748 -0.385925,-0.3972748 h -1.634504 c -0.283768,0 -0.397275,0.1135072 -0.397275,0.3972748 0,0.283769 0.15891,0.408627 0.510783,0.408627 0.05675,0 0.124857,0 0.192962,-0.01135 l -2.315548,2.258794 v -2.258794 c 0.09081,0 0.170261,0 0.249716,0 0.499432,0 0.715096,-0.06811 0.715096,-0.397276 0,-0.3405212 -0.170261,-0.3972748 -0.556186,-0.3972748 h -1.89557 c -0.249716,0 -0.385925,0.1362087 -0.385925,0.3972748 0,0.272418 0.136209,0.397276 0.442678,0.397276 0.03405,0 0.102157,0 0.215664,0 h 0.351872 v 4.994318 H 78.25186 c -0.102157,0 -0.15891,0 -0.181612,0 -0.340521,0 -0.47673,0.09081 -0.47673,0.385925 0,0.261066 0.136209,0.397275 0.385925,0.397275 h 1.89557 c 0.385925,0 0.556186,-0.05675 0.556186,-0.397275 0,-0.295119 -0.181612,-0.397276 -0.590238,-0.397276 -0.249716,0 -0.374574,0.01135 -0.374574,0.01135 z" />
+    </g>
+    <g id="g_ll" class="g_ll">
+        <title>Lima</title>
+        <path id="li" class="lander ll" d="m 89.518159,14.074267 v 1.452893 h -2.951188 v -4.994318 h 0.93076 c 0.465379,0 0.669692,-0.03405 0.669692,-0.397276 0,-0.2610661 -0.136208,-0.3972748 -0.408626,-0.3972748 -0.0454,0 -0.136208,0 -0.261066,0 h -2.497159 c -0.442679,0 -0.658342,0.022701 -0.658342,0.3972748 0,0.351873 0.181611,0.397276 0.658342,0.397276 h 0.692394 v 4.994318 h -0.692394 c -0.476731,0 -0.658342,0.03405 -0.658342,0.385925 0,0.261066 0.124858,0.397275 0.397275,0.397275 0.113507,0 0.204313,0 0.261067,0 h 4.914863 c 0.249716,0 0.397275,-0.147559 0.397275,-0.408626 v -1.827467 c 0,-0.454028 -0.0227,-0.658341 -0.397275,-0.658341 -0.351873,0 -0.397276,0.181611 -0.397276,0.658341 z" />
+    </g>
+    <g id="g_mm" class="g_mm">
+        <title>Mike</title>
+        <path id="mi" class="lander mm" d="M 94.269148,13.586186 93.05462,10.112865 C 92.952464,9.829097 92.770852,9.7382912 92.453032,9.7382912 h -0.908058 c -0.238365,0 -0.363223,0.1362087 -0.363223,0.3745738 0,0.295119 0.14756,0.374574 0.533484,0.374574 0.03405,0 0.05675,0 0.09081,0 l -0.15891,5.039721 c -0.06811,0 -0.124858,0 -0.181612,0 -0.397275,0 -0.544834,0.07945 -0.544834,0.385925 0,0.261066 0.124857,0.397275 0.385924,0.397275 h 1.555049 c 0.385925,0 0.556186,-0.05675 0.556186,-0.397275 0,-0.295119 -0.181612,-0.397276 -0.590238,-0.397276 -0.249716,0 -0.374574,0.01135 -0.374574,0.01135 l 0.102157,-4.767304 1.112371,3.189554 c 0.102156,0.306469 0.249715,0.408626 0.556185,0.408626 0.31782,0 0.46538,-0.102157 0.567536,-0.408626 l 1.08967,-3.189554 0.124858,4.767304 c -0.07946,0 -0.158911,0 -0.238366,0 -0.465379,0 -0.669692,0.0681 -0.669692,0.385925 0,0.340521 0.170261,0.397275 0.556185,0.397275 h 1.555049 c 0.261067,0 0.385925,-0.136209 0.385925,-0.397275 0,-0.30647 -0.14756,-0.385925 -0.544835,-0.385925 -0.05675,0 -0.113507,0 -0.181612,0 l -0.15891,-5.039721 c 0.03405,0 0.05675,0 0.09081,0 0.385925,0 0.533484,-0.07945 0.533484,-0.374574 0,-0.2383651 -0.124858,-0.3745738 -0.363223,-0.3745738 h -0.919409 c -0.31782,0 -0.499431,0.090806 -0.601588,0.3745738 z" />
+    </g>
+    <g id="g_nn" class="g_nn">
+        <title>November</title>
+        <path id="no" class="lander nn" d="m 99.576322,15.52716 v -4.528939 l 2.951188,5.085124 c 0.18161,0.30647 0.17026,0.317821 0.47673,0.317821 0.0227,0 0.0454,0 0.0681,0 0.27242,0 0.40863,-0.01135 0.40863,-0.283768 v -5.584556 c 0.0227,0 0.0567,0 0.0795,0 0.40862,0 0.55618,-0.09081 0.55618,-0.397276 0,-0.2610661 -0.12486,-0.3972748 -0.39727,-0.3972748 -0.12486,0 -0.21567,0 -0.26107,0 h -1.32804 c -0.40862,0 -0.60158,0.045403 -0.60158,0.3972748 0,0.283769 0.18161,0.397276 0.56753,0.397276 0.20432,0 0.32917,0 0.39728,0 h 0.21566 v 4.381379 L 99.916843,10.090164 C 99.746583,9.7836941 99.678478,9.7382912 99.315255,9.7382912 h -0.522133 c -0.612939,0 -0.930759,0.011351 -0.930759,0.3972748 0,0.351873 0.283768,0.397276 0.930759,0.397276 v 4.994318 c -0.03405,0 -0.06811,0 -0.102157,0 -0.397275,0 -0.556185,0.0681 -0.556185,0.385925 0,0.261066 0.124858,0.397275 0.397275,0.397275 0.0454,0 0.136209,0 0.261067,0 h 1.384788 c 0.44268,0 0.64699,-0.03405 0.64699,-0.397275 0,-0.283768 -0.18161,-0.385925 -0.56753,-0.385925 -0.0681,0 -0.19297,0 -0.39728,0 z" />
+    </g>
+    <g id="g_oo" class="g_oo">
+        <title>Oscar</title>
+        <path id="os" class="lander oo" d="m 107.91413,15.697421 c -1.19182,0 -1.99773,-0.953461 -1.99773,-2.678771 0,-1.72531 0.77185,-2.67877 1.99773,-2.67877 1.19183,0 1.99773,0.95346 1.99773,2.67877 0,1.72531 -0.8059,2.678771 -1.99773,2.678771 z m 2.99659,-2.678771 c 0,-2.04313 -1.25993,-3.4619704 -2.99659,-3.4619704 -1.75936,0 -2.99659,1.4188404 -2.99659,3.4619704 0,2.03178 1.28263,3.461971 2.99659,3.461971 1.73666,0 2.99659,-1.418841 2.99659,-3.461971 z" />
+    </g>
+    <g id="g_pp" class="g_pp">
+        <title>Papa</title>
+        <path id="pa" class="lander pp" d="m 114.96932,15.52716 h -1.15778 v -1.691258 h 0.96481 c 1.82747,0 2.74688,-0.703745 2.74688,-2.04313 0,-1.339385 -0.91941,-2.0544808 -2.74688,-2.0544808 h -2.56526 c -0.26107,0 -0.38592,0.1362087 -0.38592,0.3972748 0,0.374574 0.21566,0.397276 0.72644,0.397276 h 0.38593 v 4.994318 h -0.7151 c -0.27242,0 -0.39727,0.124858 -0.39727,0.385925 0,0.261066 0.12485,0.397275 0.38592,0.397275 h 2.71282 c 0.38593,0 0.55619,-0.05675 0.55619,-0.397275 0,-0.272418 -0.15891,-0.385925 -0.51078,-0.385925 z m -1.15778,-4.994318 h 1.02157 c 1.15777,0 1.74801,0.419977 1.74801,1.282632 0,0.862655 -0.59024,1.293982 -1.74801,1.293982 h -1.02157 z" />
+    </g>
+    <g id="g_qq" class="g_qq">
+        <title>Quebec</title>
+        <path id="qu" class="lander qq" d="m 121.57047,15.68607 c -1.15777,0 -1.99772,-0.94211 -1.99772,-2.66742 0,-1.72531 0.83995,-2.67877 1.99772,-2.67877 1.15778,0 1.99773,0.95346 1.99773,2.67877 0,1.72531 -0.8513,2.66742 -1.99773,2.66742 z m -0.874,0.612939 c -0.57889,0.578887 -0.94211,0.862655 -0.94211,1.055617 0,0.192963 0.21566,0.408627 0.37457,0.408627 0.22702,0 0.68104,-0.397276 1.39614,-0.397276 0.59024,0 1.15777,0.363223 1.77071,0.363223 0.53349,0 1.04427,-0.329171 1.04427,-0.544834 0,-0.204313 -0.15891,-0.397276 -0.31782,-0.397276 -0.21566,0 -0.44268,0.204313 -0.7605,0.204313 -0.40863,0 -0.8286,-0.261066 -1.30533,-0.261066 -0.56754,0 -1.01022,0.113507 -1.37344,0.261066 l 0.59024,-0.578887 c 0.12486,0.01135 0.23836,0.01135 0.36322,0.01135 1.79341,0 3.03064,-1.350736 3.03064,-3.405217 0,-1.975026 -1.31668,-3.4619704 -2.99659,-3.4619704 -1.6799,0 -2.99659,1.4755944 -2.99659,3.4506194 0,1.634505 0.85131,2.928487 2.12259,3.29171 z" />
+    </g>
+    <g id="g_rr" class="g_rr">
+        <title>Romeo</title>
+        <path id="ro" class="lander rr" d="m 127.16141,15.52716 v -2.065832 h 0.72645 c 0.51078,0 0.70375,0.181612 1.10102,0.7832 l 1.07832,1.611803 c 0.19296,0.283768 0.28377,0.454029 0.57889,0.454029 h 0.61294 c 0.26106,0 0.38592,-0.136209 0.38592,-0.397275 0,-0.30647 -0.14756,-0.385925 -0.53348,-0.385925 -0.0568,0 -0.11351,0 -0.18162,0 l -1.11237,-1.702608 c -0.12485,-0.181612 -0.26106,-0.329171 -0.47673,-0.46538 0.94211,-0.238365 1.4756,-0.885357 1.4756,-1.72531 0,-0.556185 -0.23837,-1.078319 -0.62429,-1.41884 -0.51078,-0.4426786 -1.20318,-0.4767308 -2.14529,-0.4767308 h -2.33825 c -0.24971,0 -0.38592,0.1248579 -0.38592,0.3745738 0,0.261067 0.13621,0.374574 0.45403,0.374574 0.0454,0 0.10215,0 0.20431,0 h 0.31782 v 5.039721 h -0.31782 c -0.10216,0 -0.15891,0 -0.18161,0 -0.34052,0 -0.47673,0.09081 -0.47673,0.385925 0,0.261066 0.13621,0.397275 0.38592,0.397275 h 1.86152 c 0.38593,0 0.55619,-0.05675 0.55619,-0.397275 0,-0.295119 -0.18162,-0.397276 -0.59024,-0.397276 -0.24972,0 -0.37458,0.01135 -0.37458,0.01135 z m 0,-5.039721 h 1.18048 c 1.02156,0 1.521,0.374574 1.521,1.123722 0,0.726446 -0.52214,1.11237 -1.55505,1.11237 h -1.14643 z" />
+    </g>
+    <g id="g_ss" class="g_ss">
+        <title>Sierra</title>
+        <path id="si" class="lander ss" d="m 133.60366,16.117398 c 0.55619,0.249716 1.06697,0.385924 1.6345,0.385924 1.55505,0 2.55392,-0.828603 2.55392,-2.054481 0,-1.044266 -0.65834,-1.668556 -1.95233,-1.838817 l -0.88535,-0.113507 c -0.85131,-0.113507 -1.27128,-0.442678 -1.27128,-0.998864 0,-0.703745 0.60158,-1.203176 1.50964,-1.203176 0.59024,0 1.06697,0.227014 1.30534,0.578887 0.23836,0.351872 0.17026,0.760498 0.61293,0.760498 0.26107,0 0.41998,-0.147559 0.41998,-0.408626 0,-0.0227 0,-0.03405 0,-0.05675 l -0.0795,-1.157773 c -0.0227,-0.2951193 -0.0568,-0.4199772 -0.45403,-0.4199772 -0.24972,0 -0.35188,0.068104 -0.35188,0.2837681 -0.51078,-0.2043131 -0.95346,-0.329171 -1.40749,-0.329171 -1.43019,0 -2.45175,0.8967071 -2.45175,1.9977271 0,1.112371 0.72644,1.645855 2.20204,1.850168 l 0.81725,0.113507 c 0.70375,0.102157 1.07832,0.46538 1.07832,1.044267 0,0.681043 -0.62429,1.203177 -1.6118,1.203177 -0.79455,0 -1.37344,-0.317821 -1.61181,-0.805902 -0.20431,-0.408626 -0.14756,-0.839953 -0.61293,-0.839953 -0.34053,0 -0.43133,0.15891 -0.43133,0.47673 0,0.03405 0,0.0681 0,0.113507 l 0.0681,1.282632 c 0.0227,0.397275 0.15891,0.578887 0.47673,0.578887 0.30647,0 0.40863,-0.113507 0.44268,-0.442678 z" />
+    </g>
+    <g id="g_tt" class="g_tt">
+        <title>Tango</title>
+        <path id="ta" class="lander tt" d="m 139.97779,11.974384 0.0454,-1.441542 h 1.5891 v 4.994318 h -0.83995 c -0.10216,0 -0.15891,0 -0.18162,0 -0.34052,0 -0.47673,0.09081 -0.47673,0.385925 0,0.261066 0.13621,0.397275 0.38593,0.397275 h 3.1101 c 0.24971,0 0.38592,-0.136209 0.38592,-0.397275 0,-0.272418 -0.13621,-0.385925 -0.44268,-0.385925 -0.0341,0 -0.10215,0 -0.21566,0 h -0.85131 v -4.994318 h 1.58911 l 0.0567,1.441542 c 0.0113,0.47673 0.0454,0.646991 0.43133,0.646991 0.24971,0 0.38592,-0.136209 0.38592,-0.397275 0,-0.0227 -0.0113,-0.102157 -0.0113,-0.272418 l -0.0567,-1.827466 c -0.0114,-0.2724176 -0.13621,-0.3859248 -0.41998,-0.3859248 h -4.81271 c -0.28376,0 -0.40862,0.1135072 -0.41997,0.3859248 l -0.0568,1.827466 c -0.0113,0.170261 -0.0113,0.261067 -0.0113,0.261067 0,0.272417 0.13621,0.408626 0.38593,0.408626 0.38592,0 0.41997,-0.170261 0.43132,-0.646991 z" />
+    </g>
+    <g id="g_uu" class="g_uu">
+        <title>Uniform</title>
+        <path id="un" class="lander uu" d="m 146.48815,10.532842 v 3.473321 c 0,1.555049 0.96481,2.485809 2.395,2.485809 1.6118,0 2.40635,-0.885357 2.40635,-2.690122 v -3.269008 c 0.0227,0 0.0568,0 0.0795,0 0.40862,0 0.55618,-0.09081 0.55618,-0.397276 0,-0.2610661 -0.12486,-0.3972748 -0.39727,-0.3972748 -0.0908,0 -0.17026,0 -0.26107,0 h -1.22588 c -0.40862,0 -0.60159,0.045403 -0.60159,0.3972748 0,0.329171 0.21567,0.397276 0.72645,0.397276 0.0908,0 0.19296,0 0.29512,0 v 3.14415 c 0,1.350736 -0.40863,2.020429 -1.521,2.020429 -0.55618,0 -1.04426,-0.261067 -1.30533,-0.715096 -0.24972,-0.442678 -0.24972,-0.885356 -0.24972,-1.407489 v -3.041994 c 0.0908,0 0.17026,0 0.23837,0 0.48808,0 0.69239,-0.06811 0.69239,-0.397276 0,-0.3859241 -0.22701,-0.3972748 -0.69239,-0.3972748 h -1.13507 c -0.44268,0 -0.6697,0.022701 -0.6697,0.3972748 0,0.30647 0.15891,0.397276 0.53349,0.397276 0.0454,0 0.0908,0 0.13621,0 z" />
+    </g>
+    <g id="g_vv" class="g_vv">
+        <title>Victor</title>
+        <path id="vi" class="lander vv" d="m 152.96444,10.532842 2.04313,5.221333 c 0.14756,0.385924 0.22702,0.624289 0.60159,0.624289 h 0.30647 c 0.27242,0 0.38593,-0.227014 0.53349,-0.624289 l 1.99772,-5.221333 c 0.0227,0 0.0454,0 0.0681,0 0.37457,0 0.52213,-0.102157 0.52213,-0.397276 0,-0.2610661 -0.13621,-0.3972748 -0.38592,-0.3972748 h -1.73666 c -0.38593,0 -0.55619,0.056754 -0.55619,0.3972748 0,0.272418 0.15891,0.397276 0.51078,0.397276 h 0.7378 l -1.83882,4.835408 -1.88422,-4.835408 h 0.61294 c 0.35187,0 0.51078,-0.124858 0.51078,-0.397276 0,-0.3405212 -0.17026,-0.3972748 -0.55618,-0.3972748 h -1.67991 c -0.24971,0 -0.38592,0.1362087 -0.38592,0.3972748 0,0.317821 0.15891,0.397276 0.57888,0.397276 z" />
+    </g>
+    <g id="g_ww" class="g_ww">
+        <title>Whisky</title>
+        <path id="wh" class="lander ww" d="m 161.1093,14.89152 -0.60159,-4.404081 h 0.7832 c 0.32917,0 0.48808,-0.113507 0.48808,-0.374574 0,-0.3064695 -0.17026,-0.3745738 -0.53348,-0.3745738 h -1.79342 c -0.15891,0 -0.30647,0.1362087 -0.30647,0.3745738 0,0.249716 0.14756,0.374574 0.43133,0.374574 0.0227,0 0.0454,0 0.0681,0 l 0.83995,5.527802 c 0.0227,0.181612 0.0454,0.295119 0.23836,0.295119 h 0.41998 c 0.19296,0 0.24972,-0.05675 0.29512,-0.227015 l 1.06697,-3.825193 1.20317,3.813843 c 0.0568,0.170261 0.13621,0.238365 0.30647,0.238365 h 0.39728 c 0.15891,0 0.19296,-0.09081 0.21566,-0.283768 l 0.77185,-5.539153 c 0.0227,0 0.0454,0 0.0681,0 0.28376,0 0.43132,-0.124858 0.43132,-0.374574 0,-0.2383651 -0.14756,-0.3745738 -0.30647,-0.3745738 h -1.79341 c -0.36322,0 -0.53348,0.068104 -0.53348,0.3745738 0,0.261067 0.15891,0.374574 0.48808,0.374574 h 0.874 l -0.54483,4.404081 -1.07832,-3.337113 c -0.0681,-0.204313 -0.12486,-0.249716 -0.35187,-0.249716 h -0.24972 c -0.23836,0 -0.28377,0.0681 -0.34052,0.272417 z" />
+    </g>
+    <g id="g_xx" class="g_xx">
+        <title>Xray</title>
+        <path id="xr" class="lander xx" d="m 167.02941,10.532842 1.77071,2.429055 -1.87287,2.565263 c -0.32917,0.01135 -0.48808,0.124858 -0.48808,0.385925 0,0.238365 0.15891,0.397275 0.40863,0.397275 h 1.47559 c 0.34053,0 0.48808,-0.0681 0.48808,-0.397275 0,-0.30647 -0.17026,-0.397276 -0.59023,-0.397276 -0.0908,0 -0.19296,0 -0.29512,0.01135 l 1.39614,-1.952324 1.41884,1.952324 c -0.0908,0 -0.18161,-0.01135 -0.26107,-0.01135 -0.40862,0 -0.56753,0.09081 -0.56753,0.397276 0,0.329171 0.14755,0.397275 0.48808,0.397275 h 1.47559 c 0.24972,0 0.41998,-0.15891 0.41998,-0.397275 0,-0.249716 -0.15891,-0.374574 -0.47673,-0.385925 l -1.92963,-2.599316 1.77072,-2.395002 c 0.34052,0 0.48808,-0.113507 0.48808,-0.397276 0,-0.2610661 -0.12486,-0.3972748 -0.38593,-0.3972748 h -1.39614 c -0.27241,0 -0.44267,0.1589101 -0.44267,0.3972748 0,0.249716 0.20431,0.408627 0.57888,0.408627 0.0454,0 0.11351,0 0.17026,-0.01135 l -1.30533,1.782063 -1.25993,-1.782063 c 0.0567,0.01135 0.11351,0.01135 0.15891,0.01135 0.32917,0 0.51078,-0.158911 0.51078,-0.408627 0,-0.2610661 -0.13621,-0.3972748 -0.40862,-0.3972748 h -1.39614 c -0.26107,0 -0.38593,0.1362087 -0.38593,0.3972748 0,0.272418 0.12486,0.385925 0.44268,0.397276 z" />
+    </g>
+    <g id="g_yy" class="g_yy">
+        <title>Yankee</title>
+        <path id="ya" class="lander yy" d="m 177.41036,15.52716 h -0.8059 v -1.759362 l 1.88422,-3.234956 c 0.0341,0 0.0568,0 0.0908,0 0.40863,0 0.56754,-0.07946 0.56754,-0.397276 0,-0.3632226 -0.19296,-0.3972748 -0.65834,-0.3972748 h -0.87401 c -0.0567,0 -0.10215,0 -0.14756,0 -0.44268,0 -0.61294,0.022701 -0.61294,0.3972748 0,0.30647 0.14756,0.408627 0.54484,0.408627 0.0681,0 0.14756,-0.01135 0.22701,-0.01135 l -1.39614,2.406353 -1.33938,-2.406353 c 0.0681,0 0.12486,0 0.18161,0 0.44268,0 0.63564,-0.07946 0.63564,-0.397276 0,-0.3405212 -0.17026,-0.3972748 -0.55619,-0.3972748 h -1.27128 c -0.44267,0 -0.66969,0.022701 -0.66969,0.3972748 0,0.317821 0.17026,0.397276 0.57889,0.397276 0.0341,0 0.0567,0 0.0908,0 l 1.85017,3.155501 v 1.838817 h -0.8059 c -0.49943,0 -0.66969,0.0454 -0.66969,0.385925 0,0.340521 0.17026,0.397275 0.59024,0.397275 h 2.63336 c 0.43133,0 0.60159,-0.05675 0.60159,-0.397275 0,-0.351873 -0.19296,-0.385925 -0.66969,-0.385926 z" />
+    </g>
+    <g id="g_zz" class="g_zz">
+        <title>Zulu</title>
+        <path id="zu" class="lander zz" d="m 181.73002,10.532842 h 2.3496 l -3.1782,4.619744 c -0.18161,0.261067 -0.27242,0.476731 -0.27242,0.658342 0,0.295119 0.21566,0.499432 0.53348,0.499432 h 3.48468 c 0.28376,0 0.40862,-0.102157 0.41997,-0.374574 l 0.0795,-1.679907 c 0,-0.0681 0.0113,-0.136209 0.0113,-0.204313 0,-0.329171 -0.11351,-0.47673 -0.39728,-0.47673 -0.39727,0 -0.40862,0.17026 -0.43132,0.658342 l -0.0568,1.293982 h -2.57661 l 3.28036,-4.755953 c 0.13621,-0.204313 0.20431,-0.385925 0.20431,-0.556185 0,-0.3178207 -0.21566,-0.4767308 -0.65834,-0.4767308 h -3.17821 c -0.28376,0 -0.40862,0.1135072 -0.41997,0.3859248 l -0.0681,1.532347 c 0,0.0454 0,0.09081 0,0.124858 0,0.05675 0,0.09081 0,0.102157 0,0.306469 0.11351,0.454029 0.38593,0.454029 0.28377,0 0.41998,-0.113507 0.41998,-0.385925 0,-0.0227 0,-0.113507 0.0113,-0.261066 z" />
+    </g>
+</svg>
+</div>
+<div id='counter' class='stat'>0/26</div>
+<div id='timer' class='stat'>0:00</div>
+<div id='userpanel'>
+    <div id='userinput'>
+        <input type='text' id='intext' onkeydown='handleKeyDown(event)' />
+    </div>
+    <div id='suggest'></div>
+</div>
+<div id="configpanel" class="panel">
+  <div style="text-align: center">
+  <span style="font-weight: bold">CONFIG</span>
+  </div>
+    <div><label for='cfgcounter'>
+    <input type='checkbox' class='cfg' id='cfgcounter' checked='checked' onchange='handleCounterChange(this)' /> Show Counter
+    </label></div>
+    <div><label for='cfgtimer'>
+    <input type='checkbox' class='cfg' id='cfgtimer' checked='checked' onchange='handleTimerChange(this)' /> Show Timer
+    </label></div>
+    <div><label for='cfgspot'>
+    <input type='checkbox' class='cfg' id='cfgspot' checked='checked' onchange='handleSpotChange(this)' /> Show Spot
+    </label></div>
+    <div><label for='cfgfullname'>
+    <input type='checkbox' class='cfg' id='cfgfullname' /> Full Name
+    </label></div>
+    <br>
+    <span id='changeNote'>Changing below options will restart</span><br>
+    <div><label for='cfgconnect'>
+    <input type='checkbox' class='cfg' id='cfgconnect' /> Connect
+    </label></div>
+    <div><label for='cfgfollow'>
+    <input type='checkbox' class='cfg' id='cfgfollow' /> Follow
+    </label></div>
+    <div><label for='cfghidden'>
+    <input type='checkbox' class='cfg' id='cfghidden' onchange='handleHiddenChange(this)' /> Hide
+    </label></div>
+    <br>
+    <div style='text-align: center'>
+        <input type='button' class='' id='cfgdone' onclick='closeConfig()' value='Done' />
+    </div>
+</div>
+<div id="helppanel" class="panel">
+  <div style="text-align: center">
+  <span style="font-weight: bold">HELP</span>
+  </div>
+    <p>
+    '<span id='helpKeyComplete'></span>' Show completions (at least two chars must be entered)<br>
+    '<span id='helpKeyNeighbor'></span>' Show neighbors<br>
+    '<span id='helpKeyConfig'  ></span>' Toggle config<br>
+    '<span id='helpKeyHelp'    ></span>' Toggle help<br>
+    '<span id='helpKeyEnter'   ></span>' Toggle zoom (input must be empty)<br>
+    </p>
+    <p>
+    On the <b>CONFIG</b> page:<br>
+    <i>Fullname</i>: Complete name must be entered. Mouse over a country to see its name.<br>
+    <i>Connect</i>: Entered name must be a neighbor.<br>
+    <i>Follow</i>: Name the highlighted country.<br>
+    <i>Hide</i>: Hide countries.<br>
+    <br>
+    If <i>Fullname</i> is unselected, partial names may be supplied, but must be long enough to be unambiguous. Niger and Guinea must always end with a space in order to distinguish them from Nigeria and Guinea Biseau.<br>
+    </p>
+    <p>
+    If both <i>Connect</i> and <i>Follow</i> are selected, the 'random' path that is generated will revisit about 100 countries. This inefficiency is intentional because efficient paths which visit all countries are extremely similar.<br>
+    </p>
+    The following query parameters (with value 1 or 0) will override config settings: <i>counter</i>, <i>timer</i>, <i>spot</i>, <i>fullname</i>, <i>connect</i>, <i>follow</i>, <i>hide</i>, <i>debug</i>, <i>auto</i>. e.g. '?follow=1&hide=1&spot=0'. Reload page to restart.<br>
+    <br>
+    <div style='text-align: center'>
+        <input type='button' class='' id='cfgdone' onclick='closeHelp()' value='Done' />
+    </div>
+</div>
+<div id="completedpanel" class="panel">
+  <div style="text-align: center">
+  <span style="font-weight: bold">COMPLETE</span>
+  </div>
+    <p id='completedtext'>
+    </p>
+    <div style='text-align: center'>
+        <input type='button' class='' id='completeddone' onclick='closeCompleted()' value='OK' />
+        <input type='button' class='' id='completedrestart' onclick='restart()' value='Restart' />
+    </div>
+</div>
+</body>
+</html>

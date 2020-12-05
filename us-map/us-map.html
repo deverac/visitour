@@ -1,0 +1,1837 @@
+<html>
+<head>
+<meta charset="utf-8">
+<style type='text/css'>
+
+    body {
+        margin: 0;
+        padding:0;
+        background: lightgray;
+        font-family: sans-serif;
+    }
+    .lander {
+        fill: #c0c0c0;
+        stroke: #000000;
+        stroke-width: 0.3;
+        fill-rule: evenodd;
+    }
+    div span {
+        font-size: 14pt;
+    }
+    #startBox {
+        border: solid red 1px;
+        position: absolute;
+        z-index: 3;
+        pointer-events: none;
+        visibility: hidden;
+    }
+    #endBox {
+        border: solid green 1px;
+        position: absolute;
+        z-index: 3;
+        pointer-events: none;
+        visibility: hidden;
+    }
+    #spotty {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        background-color: black;
+        z-index: 4;
+        pointer-events: none;
+        display: none;
+    }
+    #mapdisplay {
+        width: 100%;
+        margin-top: 25px;
+        text-align: center;
+    }
+    #svgimg {
+        width: 98%;
+        height: auto;
+        margin: auto auto;
+    }
+    #intext {
+        font-size: 24pt;
+        text-align: center;
+    }
+    #userpanel {
+        text-align: center;
+    }
+    #counter {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    #timer {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    .stat {
+        margin: 20px;
+        font-size: 18pt;
+        background-color: darkgray;
+        color: black;
+        display: inline-block;
+        border-radius: 5px;
+        padding: 3px;
+        border: solid black 1px;
+    }
+    .lander.visited {
+        fill: lightgray;
+    }
+    .lander.nextcc {
+        fill: black;
+    }
+    .panel {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: darkgray;
+        z-index: 5;
+        border-radius: 20px;
+        border: solid black 5px;
+        padding: 20px;
+        display: none;
+    }
+
+
+  .ak { fill: #a2ff9a }
+  .al { fill: #a2ff9a }
+  .ar { fill: #a2ff9a }
+  .az { fill: #e9b1fd }
+  .ca { fill: #ffaba6 }
+  .co { fill: #ffaba6 }
+  .ct { fill: #a2ff9a }
+  .de { fill: #fffd80 }
+  .fl { fill: #fffd80 }
+  .ga { fill: #fffd80 }
+  .hi { fill: #fffd80 }
+  .ia { fill: #e9b1fd }
+  .id { fill: #e9b1fd }
+  .il { fill: #ffaba6 }
+  .in { fill: #e9b1fd }
+  .ks { fill: #b0c0ff }
+  .ky { fill: #a2ff9a }
+  .la { fill: #e9b1fd }
+  .ma { fill: #fffd80 }
+  .md { fill: #ffaba6 }
+  .me { fill: #fffd80 }
+  .mi { fill: #ffaba6 }
+  .mn { fill: #fffd80 }
+  .mo { fill: #fffd80 }
+  .ms { fill: #fffd80 }
+  .mt { fill: #a2ff9a }
+  .nc { fill: #a2ff9a }
+  .nd { fill: #e9b1fd }
+  .ne { fill: #a2ff9a }
+  .nh { fill: #e9b1fd }
+  .nj { fill: #e9b1fd }
+  .nm { fill: #fffd80 }
+  .nv { fill: #fffd80 }
+  .ny { fill: #fffd80 }
+  .oh { fill: #fffd80 }
+  .ok { fill: #e9b1fd }
+  .or { fill: #a2ff9a }
+  .pa { fill: #a2ff9a }
+  .ri { fill: #fffd80 }
+  .sc { fill: #e9b1fd }
+  .sd { fill: #ffaba6 }
+  .tn { fill: #e9b1fd }
+  .tx { fill: #ffaba6 }
+  .ut { fill: #a2ff9a }
+  .va { fill: #fffd80 }
+  .vt { fill: #a2ff9a }
+  .wa { fill: #fffd80 }
+  .wi { fill: #a2ff9a }
+  .wv { fill: #e9b1fd }
+  .wy { fill: #fffd80 }
+</style>
+<script type="text/javascript">
+var revit = {
+  'alabama': 'g_al',
+  'alaska': 'g_ak',
+  'arizona': 'g_az',
+  'arkansas': 'g_ar',
+  'california': 'g_ca',
+  'colorado': 'g_co',
+  'connecticut': 'g_ct',
+  'delaware': 'g_de',
+  'florida': 'g_fl',
+  'georgia': 'g_ga',
+  'hawaii': 'g_hi',
+  'idaho': 'g_id',
+  'illinois': 'g_il',
+  'indiana': 'g_in',
+  'iowa': 'g_ia',
+  'kansas': 'g_ks',
+  'kentucky': 'g_ky',
+  'louisiana': 'g_la',
+  'maine': 'g_me',
+  'maryland': 'g_md',
+  'massachusetts': 'g_ma',
+  'michigan': 'g_mi',
+  'minnesota': 'g_mn',
+  'mississippi': 'g_ms',
+  'missouri': 'g_mo',
+  'montana': 'g_mt',
+  'nebraska': 'g_ne',
+  'nevada': 'g_nv',
+  'new hampshire': 'g_nh',
+  'new jersey': 'g_nj',
+  'new mexico': 'g_nm',
+  'new york': 'g_ny',
+  'north carolina': 'g_nc',
+  'north dakota': 'g_nd',
+  'ohio': 'g_oh',
+  'oklahoma': 'g_ok',
+  'oregon': 'g_or',
+  'pennsylvania': 'g_pa',
+  'rhode island': 'g_ri',
+  'south carolina': 'g_sc',
+  'south dakota': 'g_sd',
+  'tennessee': 'g_tn',
+  'texas': 'g_tx',
+  'utah': 'g_ut',
+  'vermont': 'g_vt',
+  'virginia': 'g_va',
+  'washington': 'g_wa',
+  'west virginia': 'g_wv',
+  'wisconsin': 'g_wi',
+  'wyoming': 'g_wy',
+};
+
+var neighbors = {
+  'ak': ['hi', 'wa'],
+  'al': ['ga', 'ms', 'tn'],
+  'ar': ['la', 'mo', 'ms', 'ok', 'tn', 'tx'],
+  'az': ['ca', 'nm', 'nv', 'ut'],
+  'ca': ['az', 'hi', 'nv', 'or'],
+  'co': ['ks', 'ne', 'nm', 'ok', 'ut', 'wy'],
+  'ct': ['ny', 'ri'],
+  'de': ['md', 'nj', 'pa'],
+  'fl': [],
+  'ga': ['al', 'nc', 'sc', 'tn'],
+  'hi': ['ak', 'ca'],
+  'ia': ['il', 'mn', 'mo', 'ne', 'sd', 'wi'],
+  'id': ['mt', 'nv', 'or', 'ut', 'wa', 'wy'],
+  'il': ['ia', 'in', 'ky', 'mo', 'wi'],
+  'in': ['il', 'ky', 'mi', 'oh'],
+  'ks': ['co', 'mo', 'ne', 'ok'],
+  'ky': ['il', 'in', 'mo', 'oh', 'tn', 'va', 'wv'],
+  'la': ['ar', 'ms', 'tx'],
+  'ma': [],
+  'md': ['de', 'pa', 'va', 'wv'],
+  'me': ['nh'],
+  'mi': ['in', 'oh', 'wi'],
+  'mn': ['ia', 'nd', 'sd', 'wi'],
+  'mo': ['ar', 'ia', 'il', 'ks', 'ky', 'ne', 'ok', 'tn'],
+  'ms': ['al', 'ar', 'la', 'tn'],
+  'mt': ['id', 'nd', 'sd', 'wy'],
+  'nc': ['ga', 'sc', 'tn', 'va'],
+  'nd': ['mn', 'mt', 'sd'],
+  'ne': ['co', 'ia', 'ks', 'mo', 'sd', 'wy'],
+  'nh': ['me', 'vt'],
+  'nj': ['de', 'ny', 'pa'],
+  'nm': ['az', 'co', 'ok', 'tx'],
+  'nv': ['az', 'ca', 'id', 'or', 'ut'],
+  'ny': ['ct', 'nj', 'pa', 'vt'],
+  'oh': ['in', 'ky', 'mi', 'pa', 'wv'],
+  'ok': ['ar', 'co', 'ks', 'mo', 'nm', 'tx'],
+  'or': ['ca', 'id', 'nv', 'wa'],
+  'pa': ['de', 'md', 'nj', 'ny', 'oh', 'wv'],
+  'ri': ['ct'],
+  'sc': ['ga', 'nc'],
+  'sd': ['ia', 'mn', 'mt', 'nd', 'ne', 'wy'],
+  'tn': ['al', 'ar', 'ga', 'ky', 'mo', 'ms', 'nc'],
+  'tx': ['ar', 'la', 'nm', 'ok'],
+  'ut': ['az', 'co', 'id', 'nv', 'wy'],
+  'va': ['ky', 'md', 'nc', 'wv'],
+  'vt': ['nh', 'ny'],
+  'wa': ['ak', 'id', 'or'],
+  'wi': ['ia', 'il', 'mi', 'mn'],
+  'wv': ['ky', 'md', 'oh', 'pa', 'va'],
+  'wy': ['co', 'id', 'mt', 'ne', 'sd', 'ut'],
+};
+
+var centers = {
+  'ak': {
+    'xc': 0.48863636363636365,
+    'yc': 0.3147208121827411,
+  },
+  'al': {
+    'xc': 0.4880952380952381,
+    'yc': 0.5217391304347826,
+  },
+  'ar': {
+    'xc': 0.43636363636363634,
+    'yc': 0.46534653465346537,
+  },
+  'az': {
+    'xc': 0.4866666666666667,
+    'yc': 0.5371428571428571,
+  },
+  'ca': {
+    'xc': 0.4915254237288136,
+    'yc': 0.6744186046511628,
+  },
+  'co': {
+    'xc': 0.4375,
+    'yc': 0.496,
+  },
+  'ct': {
+    'xc': 0.358974358974359,
+    'yc': 0.42105263157894735,
+  },
+  'de': {
+    'xc': 0.56,
+    'yc': 0.7631578947368421,
+  },
+  'fl': {
+    'xc': 0.7673267326732673,
+    'yc': 0.4502923976608187,
+  },
+  'ga': {
+    'xc': 0.5333333333333333,
+    'yc': 0.608,
+  },
+  'hi': {
+    'xc': 0.8482758620689655,
+    'yc': 0.7634408602150538,
+  },
+  'ia': {
+    'xc': 0.3533834586466165,
+    'yc': 0.47126436781609193,
+  },
+  'id': {
+    'xc': 0.40601503759398494,
+    'yc': 0.7169811320754716,
+  },
+  'il': {
+    'xc': 0.4772727272727273,
+    'yc': 0.40764331210191085,
+  },
+  'in': {
+    'xc': 0.5074626865671642,
+    'yc': 0.47413793103448276,
+  },
+  'ks': {
+    'xc': 0.4171779141104294,
+    'yc': 0.5,
+  },
+  'ky': {
+    'xc': 0.65625,
+    'yc': 0.43373493975903615,
+  },
+  'la': {
+    'xc': 0.2698412698412698,
+    'yc': 0.2909090909090909,
+  },
+  'ma': {
+    'xc': 0.5569620253164557,
+    'yc': 0.37209302325581395,
+  },
+  'md': {
+    'xc': 0.5980392156862745,
+    'yc': 0.32075471698113206,
+  },
+  'me': {
+    'xc': 0.3902439024390244,
+    'yc': 0.5390625,
+  },
+  'mi': {
+    'xc': 0.7409638554216867,
+    'yc': 0.7413793103448276,
+  },
+  'mn': {
+    'xc': 0.363013698630137,
+    'yc': 0.3950617283950617,
+  },
+  'mo': {
+    'xc': 0.4863013698630137,
+    'yc': 0.5271317829457365,
+  },
+  'ms': {
+    'xc': 0.4936708860759494,
+    'yc': 0.31654676258992803,
+  },
+  'mt': {
+    'xc': 0.3392857142857143,
+    'yc': 0.5804195804195804,
+  },
+  'nc': {
+    'xc': 0.6632653061224489,
+    'yc': 0.5057471264367817,
+  },
+  'nd': {
+    'xc': 0.3819444444444444,
+    'yc': 0.4945054945054945,
+  },
+  'ne': {
+    'xc': 0.39226519337016574,
+    'yc': 0.5054945054945055,
+  },
+  'nh': {
+    'xc': 0.43243243243243246,
+    'yc': 0.7142857142857143,
+  },
+  'nj': {
+    'xc': 0.40625,
+    'yc': 0.2857142857142857,
+  },
+  'nm': {
+    'xc': 0.5163398692810458,
+    'yc': 0.46875,
+  },
+  'nv': {
+    'xc': 0.4642857142857143,
+    'yc': 0.33640552995391704,
+  },
+  'ny': {
+    'xc': 0.5527950310559007,
+    'yc': 0.456,
+  },
+  'oh': {
+    'xc': 0.4787234042553192,
+    'yc': 0.5714285714285714,
+  },
+  'ok': {
+    'xc': 0.671957671957672,
+    'yc': 0.504950495049505,
+  },
+  'or': {
+    'xc': 0.423728813559322,
+    'yc': 0.5238095238095238,
+  },
+  'pa': {
+    'xc': 0.29133858267716534,
+    'yc': 0.5487804878048781,
+  },
+  'ri': {
+    'xc': 0.42105263157894735,
+    'yc': 0.36363636363636365,
+  },
+  'sc': {
+    'xc': 0.6017699115044248,
+    'yc': 0.43023255813953487,
+  },
+  'sd': {
+    'xc': 0.2875816993464052,
+    'yc': 0.4174757281553398,
+  },
+  'tn': {
+    'xc': 0.25268817204301075,
+    'yc': 0.5846153846153846,
+  },
+  'tx': {
+    'xc': 0.6503267973856209,
+    'yc': 0.5266666666666666,
+  },
+  'ut': {
+    'xc': 0.5040650406504065,
+    'yc': 0.5935483870967742,
+  },
+  'va': {
+    'xc': 0.6190476190476191,
+    'yc': 0.4842105263157895,
+  },
+  'vt': {
+    'xc': 0.47368421052631576,
+    'yc': 0.28169014084507044,
+  },
+  'wa': {
+    'xc': 0.36054421768707484,
+    'yc': 0.46296296296296297,
+  },
+  'wi': {
+    'xc': 0.5470085470085471,
+    'yc': 0.5081967213114754,
+  },
+  'wv': {
+    'xc': 0.29,
+    'yc': 0.68,
+  },
+  'wy': {
+    'xc': 0.4155844155844156,
+    'yc': 0.4883720930232558,
+  },
+};
+
+
+class Storage {
+
+    readConfig() {
+        try {
+            return JSON.parse(localStorage.getItem('config'));
+        } catch (err) {
+            return {};
+        }
+    }
+
+    saveConfig(cfg) {
+        localStorage.setItem('config', JSON.stringify(cfg));
+    }
+}
+
+class DOM {
+
+    constructor() {
+        this.isConfigPanelShowing = false;
+        this.isHelpPanelShowing = false;
+        this.isCompletedPanelShowing = false;
+    }
+
+    _getTimer() {
+        return document.querySelector('#timer');
+    }
+
+    hideTimer() {
+        this._getTimer().style.visibility = 'hidden';
+    }
+
+    showTimer() {
+        this._getTimer().style.visibility = 'visible';
+    }
+
+    setTimerText(txt) {
+        var elem = this._getTimer();
+        if (elem) {
+            elem.innerText = txt;
+        }
+    }
+
+    setCompletedHtml(html) {
+        var elem = this._getCompletedText();
+        if (elem) {
+            elem.innerHTML = html;
+        }
+    }
+
+
+    _getCounter() {
+        return document.querySelector('#counter');
+    }
+
+    hideCounter() {
+        this._getCounter().style.visibility = 'hidden';
+    }
+
+    showCounter() {
+        this._getCounter().style.visibility = 'visible';
+    }
+
+    updateCounter(txt) {
+        var ele = this._getCounter();
+        if (ele) {
+            ele.innerText = txt;
+        }
+    }
+
+    _getConfigPanel() {
+        return document.querySelector('#configpanel');
+    }
+
+    openConfigPanel(cfg) {
+        if (this.isHelpPanelShowing || this.isCompletedPanelShowing) {
+            return;
+        }
+        this.isConfigPanelShowing = this._openPanel(this._getConfigPanel());
+    }
+
+    _getConfigPanelSettings() {
+        return {
+            connect:   document.querySelector('#cfgconnect').checked,
+            follow:    document.querySelector('#cfgfollow').checked,
+            hidden:    document.querySelector('#cfghidden').checked,
+            counter:   document.querySelector('#cfgcounter').checked,
+            timer:     document.querySelector('#cfgtimer').checked,
+            spot:      document.querySelector('#cfgspot').checked,
+            fullname:  document.querySelector('#cfgfullname').checked,
+        };
+    }
+
+    closeConfigPanel() {
+        var cfg = this._getConfigPanelSettings();
+        this.isConfigPanelShowing = this._closePanel(this._getConfigPanel());
+        return cfg;
+    }
+
+    _getSuggestElement() {
+        return document.querySelector('#suggest');
+    }
+
+    showSuggestText(val) {
+        var suggest = this._getSuggestElement();
+        if (suggest) {
+            suggest.innerText = val;
+        }
+    }
+
+    _getHelpPanel() {
+        return document.querySelector('#helppanel');
+    }
+
+    _getCompletedPanel() {
+        return document.querySelector('#completedpanel');
+    }
+
+    _getCompletedText() {
+        return document.querySelector('#completedtext');
+    }
+
+    _openPanel(elem) {
+        if (elem) {
+            elem.style.display = 'block';
+            return true;
+        }
+        return false;
+    }
+
+    _closePanel(elem) {
+        // Returns value indicates showing/hidden, not success/error.
+        if (elem) {
+            elem.style.display = 'none';
+            return false;
+        }
+        return true;
+    }
+
+    openHelpPanel() {
+        if (this.isConfigPanelShowing || this.isCompletedPanelShowing) {
+            return;
+        }
+        this.isHelpPanelShowing = this._openPanel(this._getHelpPanel());
+    }
+
+    closeHelpPanel() {
+        this.isHelpPanelShowing = this._closePanel(this._getHelpPanel());
+    }
+
+    toggleHelpPanel() {
+        if (this.isHelpPanelShowing) {
+            this.closeHelpPanel();
+        } else {
+            this.openHelpPanel();
+        }
+    }
+
+    openCompletedPanel() {
+        if (this.isHelpPanelShowing || this.isConfigPanelShowing) {
+            return;
+        }
+        this.isCompletedPanelShowing = this._openPanel(this._getCompletedPanel());
+    }
+
+    closeCompletedPanel() {
+        this.isCompletedPanelShowing = this._closePanel(this._getCompletedPanel());
+    }
+
+    _getInText() {
+        return document.querySelector('#intext');
+    }
+
+    getUserInput() {
+        var elem = this._getInText();
+        if (elem) {
+            return elem.value;
+        }
+        return '';
+    }
+
+    clearUserInput() {
+        var elem = this._getInText();
+        if (elem) {
+            elem.value = '';
+            this.userInputFocus();
+        }
+    }
+
+    userInputFocus() {
+        var elem = this._getInText();
+        if (elem) {
+            elem.focus();
+        }
+    }
+
+    clearAllVisited() {
+        this.removeClass('visited');
+    }
+
+    setVisited(cc) {
+        this.addClass(cc, 'visited');
+    }
+
+    clearAllHighlight() {
+        this.removeClass('nextcc');
+    }
+
+    setHighlight(cc) {
+        this.addClass(cc, 'nextcc');
+    }
+
+    _getId(id) {
+        return document.querySelector('#'+id);
+    }
+
+    hide(gcc) {
+        var elem = this._getId(gcc);
+        if (elem) {
+            elem.style.visibility = 'hidden';
+        }
+    }
+
+    hideAll(cc_ids) {
+        for (let n in cc_ids) {
+            var elem = this._getId('g_'+cc_ids[n]);
+            if (elem) {
+                elem.style.visibility = 'hidden';
+            }
+        }
+    }
+
+    unhide(gcc) {
+        var elem = this._getId(gcc);
+        if (elem) {
+            elem.style.visibility = 'visible';
+        }
+    }
+
+    unhideAll(cc_ids) {
+        for (let n in cc_ids) {
+            var elem = this._getId('g_'+cc_ids[n]);
+            if (elem) {
+                elem.style.visibility = 'visible';
+            }
+        }
+    }
+
+    removeClass(cls) {
+        var elems = document.getElementsByClassName(cls);
+        for (let i = elems.length-1; i >= 0; i--) {
+            elems[i].classList.remove(cls);
+        }
+    }
+
+    addClass(cc, cls) {
+        var elems = document.getElementsByClassName(cc);
+        for (let i = 0; i < elems.length; i++) {
+            elems[i].classList.add(cls);
+        }
+    }
+
+    _getSpot() {
+        return document.querySelector('#spotty');
+    }
+
+    showSpot(left, top) {
+        if (left >= 0 && top >= 0) {
+            var spot = this._getSpot();
+            spot.style.left = left;
+            spot.style.top  = top;
+            spot.style.display = 'block';
+        }
+    }
+
+    hideSpot() {
+        var spot = this._getSpot();
+        spot.style.display = 'none';
+    }
+
+    _getIntext() {
+        return this._getId('intext');
+    }
+
+    setTextOk() {
+        var elem = this._getIntext();
+        if (elem) {
+            elem.style.backgroundColor = 'lightgreen';
+        }
+    }
+
+    setTextBad() {
+        var elem = this._getIntext();
+        if (elem) {
+            elem.style.backgroundColor = 'lightsalmon';
+        }
+    }
+
+    setHelpKeys(keys) {
+        var elem;
+        elem = document.querySelector('#helpKeyComplete');
+        if (elem) {
+            elem.innerText = keys.COMPLETE;
+        }
+        elem = document.querySelector('#helpKeyConfig');
+        if (elem) {
+            elem.innerText = keys.CONFIG;
+        }
+        elem = document.querySelector('#helpKeyEnter');
+        if (elem) {
+            elem.innerText = keys.ENTER;
+        }
+        elem = document.querySelector('#helpKeyHelp');
+        if (elem) {
+            elem.innerText = keys.HELP;
+        }
+        elem = document.querySelector('#helpKeyNeighbor');
+        if (elem) {
+            elem.innerText = keys.NEIGHBORS;
+        }
+    }
+
+}
+
+var KEY = {
+    COMPLETE: ',',
+    CONFIG: '/',
+    ENTER: 'Enter',
+    HELP: '=',
+    NEIGHBORS: '.',
+};
+
+var helpText = "Press '" + KEY.HELP + "' to show help.";
+
+var config = null;
+var timer = null;
+var current_gcc = null;
+var target_gcc = null;
+var nextcc = null;
+
+var num_incorrect = 0;
+var num_correct = 0;
+
+var isZoomedOut = true;
+var isComplete = false;
+
+var start_date = null;
+var duration = 0;
+
+var revit_keys = Object.keys(revit);
+var gcc_to_name = {};
+var visited = {};
+var directed_graph = [];
+
+var dom = new DOM();
+var storage = new Storage();
+
+
+function getSvgDims() {
+    var svgimg = document.querySelector('#svgimg');
+    return {
+        'width': svgimg.getAttribute('width'),
+        'height': svgimg.getAttribute('height'),
+    };
+}
+
+function getSvgRect() {
+    var svgimg = document.querySelector('#svgimg');
+    return svgimg.getBoundingClientRect(); // Actual pixel size in browser
+};
+
+function getViewbox() {
+    var svgimg = document.querySelector('#svgimg');
+    var vbAry = svgimg.getAttribute('viewBox').split(/ +/g);
+    var x = parseFloat(vbAry[0]);
+    var y = parseFloat(vbAry[1]);
+    var width = parseFloat(vbAry[2]);
+    var height = parseFloat(vbAry[3]);
+    return {'x': x, 'y': y, 'width': width, 'height': height };
+}
+
+function setViewbox(x, y, w, h) {
+    var svgimg = document.querySelector('#svgimg');
+    svgimg.setAttribute('viewBox', x + ' ' + y + ' '+ w + ' ' + h);
+}
+
+function getBoundingBoxOfElement(gcc) {
+    var ele = document.getElementById(gcc);
+    if (ele) {
+        return ele.getBBox();
+    }
+    return { 'x': 0, 'y': 0, 'width': 0, 'height': 0 };
+}
+
+function closeHelp() {
+    dom.closeHelpPanel();
+    dom.userInputFocus();
+}
+
+function closeCompleted() {
+    dom.closeCompletedPanel();
+    dom.userInputFocus();
+}
+
+function restart() {
+    location.reload()
+}
+
+function closeConfig() {
+    var cfg = dom.closeConfigPanel();
+    var connectedChanged = cfg.connect != config.connect;
+    var followChanged    = cfg.follow  != config.follow;
+    var hiddenChanged    = cfg.hidden  != config.hidden;
+
+    config.counter   = cfg.counter;
+    config.timer     = cfg.timer;
+    config.spot      = cfg.spot;
+    config.fullname  = cfg.fullname;
+    config.connect   = cfg.connect;
+    config.follow    = cfg.follow;
+    config.hidden    = cfg.hidden;
+
+    storage.saveConfig(config);
+    if (connectedChanged || followChanged || hiddenChanged) {
+        restart();
+    }
+    dom.userInputFocus();
+}
+
+function openConfig() {
+    dom.openConfigPanel(config);
+}
+
+function drawSpot() {
+    if (target_gcc) {
+        var box = computeStartBox();
+
+        var c2 = target_gcc.substring(2)
+        var xcm = centers[c2]['xc'];
+        var ycm = centers[c2]['yc'];
+
+        var left = box.x + (box.width * xcm);
+        var top  = box.y + (box.height * ycm);
+        dom.showSpot(left, top)
+    }
+}
+
+function drawStartBox() {
+    var box = computeStartBox();
+    var startbox = document.querySelector('#startBox');
+    startbox.style.visibility = (config.debug ? 'visible' : 'hidden');
+    startbox.style.left   = box.x;
+    startbox.style.top    = box.y;
+    startbox.style.width  = box.width;
+    startbox.style.height = box.height;
+}
+
+function computeStartBox() {
+    var svgRect = getSvgRect();
+    var vb = getViewbox();
+    var svgScale = svgRect.width / (vb.width );
+    var n = getBoundingBoxOfElement(target_gcc);
+    return {
+        'x': svgRect.x + ((n.x - vb.x) * svgScale),
+        'y': svgRect.y + ((n.y - vb.y) * svgScale),
+        'width': n.width * svgScale,
+        'height': n.height * svgScale,
+    }
+}
+
+function drawEndBox() {
+    var box = computeEndBox();
+    var endbox = document.querySelector('#endBox');
+    endbox.style.visibility = (config.debug ? 'visible' : 'hidden');
+    endbox.style.left   = box.x;
+    endbox.style.top    = box.y;
+    endbox.style.width  = box.width;
+    endbox.style.height = box.height;
+}
+
+function computeEndBox() {
+    target_scale = 1.6;
+    var svgRect = getSvgRect();
+    var n = getBoundingBoxOfElement(target_gcc);
+
+    return {
+        'x': svgRect.x + (svgRect.width - (n.width * target_scale)) / 2,
+        'y': svgRect.y + (svgRect.height - (n.height * target_scale)) / 2,
+        'width': n.width * target_scale,
+        'height': n.height * target_scale,
+    }
+}
+
+function transitionTo() {
+    var vbox = getViewbox();
+
+    var newX = vbox.x;
+    var newY = vbox.y;
+    var newWidth = vbox.width;
+    var newHeight = vbox.height;
+
+    if (isZoomedOut) {
+
+        if (Math.abs(newX) < 1) {
+        } else if (newX > 0) {
+            newX -= newX * 0.1;
+            if (newX < 0) newX = 0;
+        } else if (newX < 0) {
+            newX -= newX * 0.1;
+            if (newX > 0) newX = 0;
+        }
+
+        if (Math.abs(newY) < 1) {
+        } else if (newY > 0) {
+            newY -= newY * 0.1;
+            if (newY < 0) ny = 0;
+        } else if (newY < 0) {
+            newY -= newY * 0.1;
+            if (newY > 0) newY = 0;
+        }
+        var dims = getSvgDims();
+        if (newWidth < dims.width) {
+            newWidth += (dims.width - newWidth) * 0.1
+        }
+        if (newWidth > dims.width) {
+            newWidth = dims.width;
+        }
+        if (newHeight < dims.height) {
+            newHeight += (dims.height - newHeight) * 0.1
+        }
+        if (newHeight > dims.height) {
+            newHeight = dims.height;
+        }
+    } else {
+        var svgRect = getSvgRect();
+
+        var sbox = computeStartBox();
+        var ebox = computeEndBox();
+        var bbox = getBoundingBoxOfElement(target_gcc);
+
+        var srcX = vbox.x;
+        var srcY = vbox.y;
+        var srcWidth = vbox.width;
+        var srcHeight = vbox.height;
+
+        var diffScale = ebox.width / sbox.width;
+        var tgtWidth = vbox.width / diffScale;
+        var tgtHeight = vbox.height / diffScale;
+        var tgtX = (bbox.x - tgtWidth/2  + bbox.width/2);
+        var tgtY = (bbox.y - tgtHeight/2  + bbox.height/2);
+
+        newWidth = srcWidth + (tgtWidth - srcWidth) * 0.1;
+        newHeight = srcHeight + (tgtHeight - srcHeight) * 0.1;
+        newX = srcX + (tgtX - srcX) * 0.1;
+        newY = srcY + (tgtY - srcY) * 0.1;
+    }
+    setViewbox(newX, newY, newWidth, newHeight);
+    if (config.debug) {
+        drawStartBox();
+        drawEndBox();
+    }
+    if (config.spot) {
+        drawSpot();
+    }
+    if (! isComplete) {
+        updateTimer();
+    }
+    timer = setTimeout(transitionTo, 50);
+}
+
+
+function boxit(gcc) {
+    target_gcc = gcc;
+    timer = setTimeout(transitionTo, 1);
+}
+
+function findMatches(val) {
+    var lowerVal = val.toLowerCase();
+    var exact = lowerVal.endsWith(' ') || config.fullname;
+    lowerVal = lowerVal.trim();
+    var matches = [];
+    for (k in revit_keys) {
+        if (exact && revit_keys[k] == lowerVal ) {
+            matches.push(revit_keys[k]);
+            break;
+        } else if (revit_keys[k].startsWith(lowerVal) && ! exact) {
+            matches.push(revit_keys[k]);
+        }
+    }
+    return matches;
+}
+
+function isNeighbor(cur, tgt, isGroupIds) {
+    if (cur == null) {
+        return true;
+    }
+    if (isGroupIds) {
+        // Remove 'g_' prefix from cur and tgt.
+        return neighbors[cur.substring(2)].includes(tgt.substring(2));
+    }
+    return neighbors[cur].includes(tgt);
+}
+
+function handleTimerChange(ele) {
+    if (ele.checked) {
+        dom.showTimer();
+    } else {
+        dom.hideTimer();
+    }
+}
+
+function handleSpotChange(ele) {
+    config.spot = ele.checked
+    if (ele.checked) {
+        dom.showSpot(-1, -1);
+    } else {
+        dom.hideSpot();
+    }
+}
+
+function handleHiddenChange(ele) {
+    config.hidden = ele.checked;
+    var keys = Object.keys(neighbors);
+    if (ele.checked) {
+        dom.hideAll(keys);
+    } else {
+        dom.unhideAll(keys);
+    }
+}
+
+function handleCounterChange(ele) {
+    if (ele.checked) {
+        dom.showCounter();
+    } else {
+        dom.hideCounter();
+    }
+}
+
+function handleKeyDown(evt) {
+    var name = evt.key;
+    if (name == KEY.ENTER) {
+        var txt = dom.getUserInput();
+        if (txt == '') {
+            isZoomedOut = ! isZoomedOut;
+            return;
+        }
+
+        var mat = findMatches(txt);
+        if (mat.length == 1) {
+            var moveToNext = false;
+            // clearTimeout(timer);
+            var gcc = revit[mat[0]];
+
+            if (config.connect) {
+
+                if (isNeighbor(current_gcc, gcc, true)) {
+                    if (config.follow) {
+                        if (nextcc == gcc.substring(2)) {
+                            moveToNext = true;
+                        }
+                    } else {
+                        moveToNext = true;
+                    }
+                }
+
+            } else {
+
+                if (config.follow) {
+                    if (gcc.substring(2) == nextcc) {
+                        moveToNext = true;
+                    }
+                } else {
+                    moveToNext = true;
+                }
+
+            }
+            if (moveToNext) {
+                clearTimeout(timer);
+                current_gcc = gcc;
+                setAaVisited(gcc);
+                num_correct++;
+
+                dom.updateCounter(countVisitedCountries() + '/' + countTotalCountries());
+                if (countVisitedCountries() == countTotalCountries()) {
+                    if (! isComplete) {
+                        var pct = (1 - num_incorrect/num_correct) * 100;
+                        dom.setCompletedHtml('Incorrect: ' + num_incorrect + '<br>Correct: ' + num_correct + '<br>Ratio: ' + pct.toFixed(2) + '%<br>');
+                        dom.openCompletedPanel();
+                    }
+                    dom.hideSpot();
+                    isComplete = true;
+                }
+
+                if (config.follow) {
+                    dom.clearAllHighlight(gcc.substring(2))
+                    if (config.hidden) {
+                        dom.hide(gcc);
+                    }
+                    nextcc = directed_graph.shift();
+                    if (nextcc) {
+                        if (config.hidden) {
+                            dom.unhide('g_'+nextcc);
+                        }
+                        dom.setHighlight(nextcc);
+                        boxit('g_'+nextcc);
+                    }
+                } else {
+                    boxit(gcc);
+                }
+                dom.setTextOk();
+                dom.clearUserInput();
+                dom.userInputFocus();
+            } else {
+                dom.setTextBad();
+                num_incorrect++;
+            }
+        } else {
+            num_incorrect++;
+            dom.setTextBad();
+        }
+        dom.showSuggestText(helpText);
+    } else if (name == KEY.COMPLETE) {
+        evt.preventDefault();
+        showCompletions();
+    } else if (name == KEY.NEIGHBORS) {
+        evt.preventDefault();
+        showNeighbors();
+    } else if (name == KEY.CONFIG) {
+        evt.preventDefault();
+        if (dom.isConfigPanelShowing) {
+            closeConfig();
+        } else {
+            openConfig();
+        }
+    } else if (name == KEY.HELP) {
+        evt.preventDefault();
+        dom.toggleHelpPanel();
+    } else {
+        dom.setTextOk();
+        dom.showSuggestText(helpText);
+    }
+}
+
+
+function setAaVisited(gNodeId) {
+    var nodeId = gNodeId.substring(2);
+    visited[nodeId] = 1;
+    dom.setVisited(nodeId);
+}
+
+function isVisited(nodeId) {
+    return visited[nodeId] == 1;
+}
+
+function countVisitedCountries() {
+    var count = 0;
+    for (nodeId in visited) {
+        if (isVisited(nodeId)) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function countTotalCountries() {
+    return Object.keys(visited).length;
+}
+
+
+function zpad(n) {
+    return (n < 10) ? '0' + n : n;
+}
+
+function updateTimer() {
+    if (start_date) {
+        var duration_secs = parseInt((Date.now() - start_date) / 1000);
+        if (duration_secs != duration) {
+            var seconds = Math.floor((duration_secs ) % 60);
+            var minutes = Math.floor((duration_secs / ( 60)) % 60);
+            var hours = Math.floor((duration_secs / ( 60 * 60)));
+
+            duration = duration_secs;
+
+            var txt = minutes;
+            if (hours > 0) {
+                txt = hours + ':' + zpad(minutes);
+            }
+            dom.setTimerText(txt + ':' + zpad(seconds));
+        }
+    } else {
+        start_date = Date.now();
+    }
+}
+
+function showNeighbors() {
+    if (current_gcc) {
+        var nbrs = neighbors[current_gcc.substring(2)];
+        var names = [];
+        for (let i=0; i<nbrs.length; i++) {
+            names.push(gcc_to_name['g_'+nbrs[i]]);
+        }
+        dom.showSuggestText(names.join(', '));
+    }
+}
+
+function showCompletions() {
+    var val = dom.getUserInput();
+    var v = val.trim();
+    if (v.length > 1) {
+        var mat = findMatches(v);
+        dom.showSuggestText(mat.join(', '));
+    }
+}
+
+function construct_gcc_to_name() {
+    for (let key in revit) {
+        var val = revit[key];
+        gcc_to_name[val] = key;
+    }
+}
+
+function construct_visited() {
+    for (let key in neighbors) {
+        visited[key] = 0;
+    }
+}
+
+function shuffle_array(ary) {
+    var j, tmp;
+    var shuf = [];
+    for (let i = 0; i < ary.length; i++) {
+        shuf[i] = ary[i];
+    }
+
+    for (let i = shuf.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        tmp = shuf[i];
+        shuf[i] = shuf[j];
+        shuf[j] = tmp;
+    }
+    return shuf;
+}
+
+function construct_directed_graph() {
+    var stack = [];
+    var path = [];
+    var vst = {};
+    var nbrs = {};
+
+    for (let key in neighbors) {
+        vst[key] = 0;
+    }
+
+    for (let key in neighbors) {
+        nbrs[key] = shuffle_array(neighbors[key]);
+    }
+
+    var neighborIds = Object.keys(nbrs);
+    var neighborId = neighborIds[Math.floor(Math.random() * neighborIds.length)];
+
+    vst[neighborId] = 0;
+    stack.push(neighborId);
+    path.push(neighborId);
+    while (stack.length) {
+        var cd = stack[stack.length - 1];
+        var opts = nbrs[cd];
+        var n = vst[cd];
+        if (n >= opts.length) { // all visited
+            stack.pop();
+            if (stack.length) {
+                path.push(stack[stack.length - 1]);
+            }
+            continue;
+        } else {
+            var newcd = opts[n];
+            if (vst[newcd] == 0) { // not visited
+                path.push(newcd);
+                stack.push(newcd);
+            }
+            vst[cd]++;
+        }
+    }
+
+    directed_graph = path;
+}
+
+function construct_random_graph() {
+    directed_graph = shuffle_array(Object.keys(neighbors));
+}
+
+function start() {
+    dom.setTextOk();
+    dom.clearUserInput();
+    dom.showSuggestText(helpText);
+    dom.setHelpKeys(KEY);
+
+    construct_gcc_to_name();
+    construct_visited();
+    dom.updateCounter(countVisitedCountries() + '/' + countTotalCountries());
+
+    if (config.connect) {
+        construct_directed_graph();
+        shorten_path();
+    } else {
+        construct_random_graph();
+    }
+
+    if (config.hidden) {
+        dom.hideAll(Object.keys(neighbors))
+    }
+
+    if (config.follow) {
+        nextcc = directed_graph.shift();
+        if (nextcc) {
+            dom.unhide('g_'+nextcc);
+            dom.setHighlight(nextcc);
+            boxit('g_'+nextcc)
+        }
+    }
+
+    if (config.auto) {
+        setTimeout(autoMoveToNextTarget, 1000);
+    }
+}
+
+function getDefaultConfig() {
+    return {
+        counter: true,
+        timer: true,
+        spot: true,
+        fullname: false,
+
+        connect: false,
+        follow: false,
+        hidden: false,
+    };
+}
+
+function parseBool(str) {
+    var val = str.toLowerCase();
+    return (val == 'true' || val == 'yes' || val == '1');
+}
+
+function parseQueryString(qrystr) {
+    if (qrystr) {
+        var keyvals = qrystr.substring(1).split('&');
+        for (i in keyvals) {
+            var kv = keyvals[i].split('=');
+            if (kv.length == 2) {
+                var key = kv[0];
+                var val = kv[1];
+                if (key == 'debug') {
+                    config.debug = parseBool(val);
+                } else if (key == 'auto') {
+                    config.auto = parseBool(val);
+                } else if (key == 'counter') {
+                    config.counter = parseBool(val);
+                } else if (key == 'timer') {
+                    config.timer = parseBool(val);
+                } else if (key == 'spot') {
+                    config.spot = parseBool(val);
+                } else if (key == 'fullname') {
+                    config.fullname = parseBool(val);
+                } else if (key == 'connect') {
+                    config.connect = parseBool(val);
+                } else if (key == 'follow') {
+                    config.follow = parseBool(val);
+                } else if (key == 'hide') {
+                    config.hidden = parseBool(val);
+                }
+            }
+        }
+    }
+}
+
+function init() {
+    config = storage.readConfig();
+    if (Object.keys(config).length == 0) {
+        config = getDefaultConfig();
+    }
+    parseQueryString(location.search);
+    start();
+}
+
+
+function typeName(nam) {
+    document.querySelector('#intext').value = nam + ' ';
+    handleKeyDown({ 'key': 'Enter' });
+}
+
+function autoMoveToNextTarget() {
+    var cc = (config.follow ? nextcc : directed_graph.shift());
+    if (cc) {
+        var nam = gcc_to_name['g_'+cc];
+        typeName(nam);
+        setTimeout(autoMoveToNextTarget, 500);
+    }
+}
+
+
+function reroute(a, m, z) {
+    var rr = [];
+    rr.push(a);
+    for (var i=0; i<m.length; i++) {
+        rr.push(m[i]);
+    }
+    rr.push(z);
+    var kk = [];
+    var highest = -1;
+    for (var k=rr.length; k>=3; k--) {
+        for (var n=0; n+k-1<rr.length; n++) {
+            if (isNeighbor(rr[n], rr[n+k-1], false)) {
+                if (n >= highest) {
+                    highest = n+k-1;
+                    kk.push(n);
+                    kk.push((n+k-1));
+                }
+            }
+        }
+    }
+
+    var cnt = 0;
+    var zz = [];
+    var finaln = 0;
+    while (true) {
+        if (cnt <= kk[0]) {
+            zz.push(rr[cnt]);
+        } else {
+            if (kk.length) {
+                kk.shift();
+                cnt = kk.shift();
+                finaln = cnt;
+                cnt--;
+            }
+        }
+        if (cnt >= rr.length) {
+            break;
+        }
+        cnt++;
+    }
+    for (var i=finaln; i<rr.length; i++) {
+        zz.push(rr[i]);
+    }
+    return zz.slice(1, zz.length-1);
+}
+
+function shorten_path() {
+    var prevcc = null;
+    var ulinks = [];
+    var vlinks = [];
+    var vst = {};
+    var newpath = [];
+
+    for (let key in neighbors) {
+        vst[key] = 0;
+    }
+
+    for (let x in directed_graph) {
+        var cc = directed_graph[x];
+        if (vst[cc] == 0) {
+            if (vlinks.length) {
+                var rt = reroute(prevcc, vlinks, cc);
+                newpath = newpath.concat(rt);
+                prevcc = null;
+                vlinks = [];
+            }
+            ulinks.push(cc);
+        } else {
+            if (ulinks.length) {
+                prevcc = ulinks[ulinks.length - 1];
+                newpath = newpath.concat(ulinks);
+                ulinks = [];
+            }
+            vlinks.push(cc);
+        }
+        vst[cc]++;
+    }
+    directed_graph = newpath;
+}
+
+</script>
+</head>
+<body onload="init()">
+<div id='endBox'>&nbsp;</div>
+<div id='startBox'>&nbsp;</div>
+<div id='spotty'>&nbsp;</div>
+<div id="mapdisplay">
+<svg width="959.0" height="593.0" id="svgimg" viewBox="0 0  959.0 593.0" xmlns="http://www.w3.org/2000/svg">
+<path id="background" style="fill:#d8e8f6;fill-rule:evenodd" stroke="black" d="M0,0 959,0 959,593 0,593 z" />
+
+    <g id="g_ak" class="g_ak">
+        <title>Alaska</title>
+        <path id="AK" class="lander ak" d="M161.1 453.7l-.3 85.4 1.6 1 3.1.2 1.5-1.1h2.6l.2 2.9 7 6.8.5 2.6 3.4-1.9.6-.2.3-3.1 1.5-1.6 1.1-.2 1.9-1.5 3.1 2.1.6 2.9 1.9 1.1 1.1 2.4 3.9 1.8 3.4 6 2.7 3.9 2.3 2.7 1.5 3.7 5 1.8 5.2 2.1 1 4.4.5 3.1-1 3.4-1.8 2.3-1.6-.8-1.5-3.1-2.7-1.5-1.8-1.1-.8.8 1.5 2.7.2 3.7-1.1.5-1.9-1.9-2.1-1.3.5 1.6 1.3 1.8-.8.8s-.8-.3-1.3-1c-.5-.6-2.1-3.4-2.1-3.4l-1-2.3s-.3 1.3-1 1c-.6-.3-1.3-1.5-1.3-1.5l1.8-1.9-1.5-1.5v-5h-.8l-.8 3.4-1.1.5-1-3.7-.6-3.7-.8-.5.3 5.7v1.1l-1.5-1.3-3.6-6-2.1-.5-.6-3.7-1.6-2.9-1.6-1.1v-2.3l2.1-1.3-.5-.3-2.6.6-3.4-2.4-2.6-2.9-4.8-2.6-4-2.6 1.3-3.2V542l-1.8 1.6-2.9 1.1-3.7-1.1-5.7-2.4h-5.5l-.6.5-6.5-3.9-2.1-.3-2.7-5.8-3.6.3-3.6 1.5.5 4.5 1.1-2.9 1 .3-1.5 4.4 3.2-2.7.6 1.6-3.9 4.4-1.3-.3-.5-1.9-1.3-.8-1.3 1.1-2.7-1.8-3.1 2.1-1.8 2.1-3.4 2.1-4.7-.2-.5-2.1 3.7-.6v-1.3l-2.3-.6 1-2.4 2.3-3.9v-1.8l.2-.8 4.4-2.3 1 1.3h2.7l-1.3-2.6-3.7-.3-5 2.7-2.4 3.4-1.8 2.6-1.1 2.3-4.2 1.5-3.1 2.6-.3 1.6 2.3 1 .8 2.1-2.7 3.2-6.5 4.2-7.8 4.2-2.1 1.1-5.3 1.1-5.3 2.3 1.8 1.3-1.5 1.5-.5 1.1-2.7-1-3.2.2-.8 2.3h-1l.3-2.4-3.6 1.3-2.9 1-3.4-1.3-2.9 1.9h-3.2l-2.1 1.3-1.6.8-2.1-.3-2.6-1.1-2.3.6-1 1-1.6-1.1v-1.9l3.1-1.3 6.3.6 4.4-1.6 2.1-2.1 2.9-.6 1.8-.8 2.7.2 1.6 1.3 1-.3 2.3-2.7 3.1-1 3.4-.6 1.3-.3.6.5h.8l1.3-3.7 4-1.5 1.9-3.7 2.3-4.5 1.6-1.5.3-2.6-1.6 1.3-3.4.6-.6-2.4-1.3-.3-1 1-.2 2.9-1.5-.2-1.5-5.8-1.3 1.3-1.1-.5-.3-1.9-4 .2-2.1 1.1-2.6-.3 1.5-1.5.5-2.6-.6-1.9 1.5-1 1.3-.2-.6-1.8v-4.4l-1-1-.8 1.5h-6.1l-1.5-1.3-.6-3.9-2.1-3.6v-1l2.1-.8.2-2.1 1.1-1.1-.8-.5-1.3.5-1.1-2.7 1-5 4.5-3.2 2.6-1.6 1.9-3.7 2.7-1.3 2.6 1.1.3 2.4 2.4-.3 3.2-2.4 1.6.6 1 .6h1.6l2.3-1.3.8-4.4s.3-2.9 1-3.4c.6-.5 1-1 1-1l-1.1-1.9-2.6.8-3.2.8-1.9-.5-3.6-1.8-5-.2-3.6-3.7.5-3.9.6-2.4-2.1-1.8-1.9-3.7.5-.8 6.8-.5h2.1l1 1h.6l-.2-1.6 3.9-.6 2.6.3 1.5 1.1-1.5 2.1-.5 1.5 2.7 1.6 5 1.8 1.8-1-2.3-4.4-1-3.2 1-.8-3.4-1.9-.5-1.1.5-1.6-.8-3.9-2.9-4.7-2.4-4.2 2.9-1.9h3.2l1.8.6 4.2-.2 3.7-3.6 1.1-3.1 3.7-2.4 1.6 1 2.7-.6 3.7-2.1 1.1-.2 1 .8 4.5-.2 2.7-3.1h1.1l3.6 2.4 1.9 2.1-.5 1.1.6 1.1 1.6-1.6 3.9.3.3 3.7 1.9 1.5 7.1.6 6.3 4.2 1.5-1 5.2 2.6 2.1-.6 1.9-.8 4.8 1.9zM46 482.6l2.1 5.3-.2 1-2.9-.3-1.8-4-1.8-1.5H39l-.2-2.6 1.8-2.4 1.1 2.4 1.5 1.5zm-2.6 33.5l3.7.8 3.7 1 .8 1-1.6 3.7-3.1-.2-3.4-3.6zM22.7 502l1.1 2.6 1.1 1.6-1.1.8-2.1-3.1V502zM9 575.1l3.4-2.3 3.4-1 2.6.3.5 1.6 1.9.5 1.9-1.9-.3-1.6 2.7-.6 2.9 2.6-1.1 1.8-4.4 1.1-2.7-.5-3.7-1.1-4.4 1.5-1.6.3zm48.9-4.5l1.6 1.9 2.1-1.6-1.5-1.3zm2.9 3l1.1-2.3 2.1.3-.8 1.9h-2.4zm23.6-1.9l1.5 1.8 1-1.1-.8-1.9zm8.8-12.5l1.1 5.8 2.9.8 5-2.9 4.4-2.6-1.6-2.4.5-2.4-2.1 1.3-2.9-.8 1.6-1.1 1.9.8 3.9-1.8.5-1.5-2.4-.8.8-1.9-2.7 1.9-4.7 3.6-4.8 2.9zm42.3-19.8l2.4-1.5-1-1.8-1.8 1z" />
+    </g>
+    <g id="g_hi" class="g_hi">
+        <title>Hawaii</title>
+        <path id="HI" class="lander hi" d="M233.1 519.3l1.9-3.6 2.3-.3.3.8-2.1 3.1zm10.2-3.7l6.1 2.6 2.1-.3 1.6-3.9-.6-3.4-4.2-.5-4 1.8zm30.7 10l3.7 5.5 2.4-.3 1.1-.5 1.5 1.3 3.7-.2 1-1.5-2.9-1.8-1.9-3.7-2.1-3.6-5.8 2.9zm20.2 8.9l1.3-1.9 4.7 1 .6-.5 6.1.6-.3 1.3-2.6 1.5-4.4-.3zm5.3 5.2l1.9 3.9 3.1-1.1.3-1.6-1.6-2.1-3.7-.3zm7-1.2l2.3-2.9 4.7 2.4 4.4 1.1 4.4 2.7v1.9l-3.6 1.8-4.8 1-2.4-1.5zm16.6 15.6l1.6-1.3 3.4 1.6 7.6 3.6 3.4 2.1 1.6 2.4 1.9 4.4 4 2.6-.3 1.3-3.9 3.2-4.2 1.5-1.5-.6-3.1 1.8-2.4 3.2-2.3 2.9-1.8-.2-3.6-2.6-.3-4.5.6-2.4-1.6-5.7-2.1-1.8-.2-2.6 2.3-1 2.1-3.1.5-1-1.6-1.8z" />
+    </g>
+    <g id="g_al" class="g_al">
+        <title>Alabama</title>
+        <path id="AL" class="lander al" d="M628.5 466.4l.6.2 1.3-2.7 1.5-4.4 2.3.6 3.1 6v1l-2.7 1.9 2.7.3 5.2-2.5-.3-7.6-2.5-1.8-2-2 .4-4 10.5-1.5 25.7-2.9 6.7-.6 5.6.1-.5-2.2-1.5-.8-.9-1.1 1-2.6-.4-5.2-1.6-4.5.8-5.1 1.7-4.8-.2-1.7-1.8-.7-.5-3.6-2.7-3.4-2-6.5-1.4-6.7-1.8-5-3.8-16-3.5-7.9-.8-5.6.1-2.2-9 .8-23.4 2.2-12.2.8-.2 6.4.2 16.7-.7 31-.3 14.1 2.8 18.8 1.6 14.7z" />
+    </g>
+    <g id="g_ar" class="g_ar">
+        <title>Arkansas</title>
+        <path id="AR" class="lander ar" d="M587.3 346.1l-6.4-.7.9-3.1 3.1-2.6.6-2.3-1.8-2.9-31.9 1.2-23.3.7-23.6.3 1.5 6.9.1 8.5 1.4 10.9.3 38.2 2.1 1.6 3-1.2 2.9 1.2.4 10.1 25.2-.2 26.8-.8.9-1.9-.3-3.8-1.7-3.1 1.5-1.4-1.4-2.2.7-2.4 1.1-5.9 2.7-2.3-.8-2.2 4-5.6 2.5-1.1-.1-1.7-.5-1.7 2.9-5.8 2.5-1.1.2-3.3 2.1-1.4.9-4.1-1.4-4 4.2-2.4.3-2.1 1.2-4.2.9-3.1z" />
+    </g>
+    <g id="g_az" class="g_az">
+        <title>Arizona</title>
+        <path id="AZ" class="lander az" d="M135.1 389.7l-.3 1.5.5 1 18.9 10.7 12.1 7.6 14.7 8.6 16.8 10 12.3 2.4 25.4 2.7 6-39.6 7-53.1 4.4-31-24.6-3.6-60.7-11-.2 1.1-2.6 16.5-2.1 3.8-2.8-.2-1.2-2.6-2.6-.4-1.2-1.1-1.1.1-2.1 1.7-.3 6.8-.3 1.5-.5 12.5-1.5 2.4-.4 3.3 2.8 5 1.1 5.5.7 1.1 1.1.9-.4 2.4-1.7 1.2-3.4 1.6-1.6 1.8-1.6 3.6-.5 4.9-3 2.9-1.9.9-.1 5.8-.6 1.6.5.8 3.9.4-.9 3-1.7 2.4-3.7.4z" />
+    </g>
+    <g id="g_ca" class="g_ca">
+        <title>California</title>
+        <path id="CA" class="lander ca" d="M122.7 385.9l-19.7-2.7-10-1.5-.5-1.8v-9.4l-.3-3.2-2.6-4.2-.8-2.3-3.9-4.2-2.9-4.7-2.7-.2-3.2-.8-.3-1 1.5-.6-.6-3.2-1.5-2.1-4.8-.8-3.9-2.1-1.1-2.3-2.6-4.8-2.9-3.1H57l-3.9-2.1-4.5-1.8-4.2-.5-2.4-2.7.5-1.9 1.8-7.1.8-1.9v-2.4l-1.6-1-.5-2.9-1.5-2.6-3.4-5.8-1.3-3.1-1.5-4.7-1.6-5.3-3.2-4.4-.5-2.9.8-3.9h1.1l2.1-1.6 1.1-3.6-1-2.7-2.7-.5-1.9-2.6-2.1-3.7-.2-8.2.6-1.9.6-2.3.5-2.4-5.7-6.3V236l.3-.5.3-3.2-1.3-4-2.3-4.8-2.7-4.5-1.8-3.9 1-3.7.6-5.8 1.8-3.1.3-6.5-1.1-3.6-1.6-4.2L14 184l.8-3.2 1.5-4.2 1.8-.8.3-1.1 3.1-2.6 5.2-11.8.2-7.4 1.69-4.9 38.69 11.8 25.6 6.6-8 31.3-8.67 33.1L88.84 250 131 312.3l17.1 26.1-.4 3.1 2.8 5.2 1.1 5.4 1 1.5.7.6-.2 1.4-1.4 1-3.4 1.6-1.9 2.1-1.7 3.9-.5 4.7-2.6 2.5-2.3 1.1-.1 6.2-.6 1.9 1 1.7 3 .3-.4 1.6-1.4 2-3.9.6zM48.8 337l1.3 1.5-.2 1.3-3.2-.1-.6-1.2-.6-1.5zm1.9 0l1.2-.6 3.6 2.1 3.1 1.2-.9.6-4.5-.2-1.6-1.6zm20.7 19.8l1.8 2.3.8 1 1.5.6.6-1.5-1-1.8-2.7-2-1.1.2v1.2zm-1.4 8.7l1.8 3.2 1.2 1.9-1.5.2-1.3-1.2s-.7-1.5-.7-1.9v-2.2z" />
+    </g>
+    <g id="g_co" class="g_co">
+        <title>Colorado</title>
+        <path id="CO" class="lander co" d="M380.2 235.5l-36-3.5-79.1-8.6-2.2 22.1-7 50.4-1.9 13.7 34 3.9 37.5 4.4 34.7 3 14.3.6z" />
+    </g>
+    <g id="g_ct" class="g_ct">
+        <title>Connecticut</title>
+        <path id="CT" class="lander ct" d="M852 190.9l3.6-3.2 1.9-2.1.8.6 2.7-1.5 5.2-1.1 7-3.5-.6-4.2-.8-4.4-1.6-6-4.3 1.1-21.8 4.7.6 3.1 1.5 7.3v8.3l-.9 2.1 1.7 2.2z" />
+    </g>
+    <g id="g_de" class="g_de">
+        <title>Delaware</title>
+        <path id="DE" class="lander de" d="M834.4 247.2l-1 .5-3.6-2.4-1.8-4.7-1.9-3.6-2.3-1-2.1-3.6.5-2 .5-2.3.1-1.1-.6.1-1.7 1-2 1.7-.2.3 1.4 4.1 2.3 5.6 3.7 16.1 5-.3 6-1.1z" />
+    </g>
+    <g id="g_fl" class="g_fl">
+        <title>Florida</title>
+        <path id="FL" class="lander fl" d="M750.2 445.2l-5.2-.7-.7.8 1.5 4.4-.4 5.2-4.1-1-.2-2.8H737l-5.3.7-32.4 1.9-8.2-.3-1.7-1.7-2.5-4.2H681l-6.6.5-35.4 4.2-.3 2.8 1.6 1.6 2.9 2 .3 8.4 3.3-.6 6-2.1 6-.5 4.4-.6 7.6 1.8 8.1 3.9 1.6 1.5 2.9 1.1 1.6 1.9.3 2.7 3.2-1.3h3.9l3.6-1.9 3.7-3.6 3.1.2.5-1.1-.8-1 .2-1.9 4-.8h2.6l2.9 1.5 4.2 1.5 2.4 3.7 2.7 1 1.1 3.4 3.4 1.6 1.6 2.6 1.9.6 5.2 1.3 1.3 3.1 3 3.7v9.5l-1.5 4.7.3 2.7 1.3 4.8 1.8 4 .8-.5 1.5-4.5-2.6-1-.3-.6 1.6-.6 4.5 1 .2 1.6-3.2 5.5-2.1 2.4 3.6 3.7 2.6 3.1 2.9 5.3 2.9 3.9 2.1 5 1.8.3 1.6-2.1 1.8 1.1 2.6 4 .6 3.6 3.1 4.4.8-1.3 3.9.3 3.6 2.3 3.4 5.2.8 3.4.3 2.9 1.1 1 1.3.5 2.4-1 1.5-1.6 3.9-.2 3.1-1.5 2.7-3.2-.5-1.9-.3-2.4.6-1.9-.3-1.9 2.4-1.3.3-3.4-.6-1.8-.5-12-1.3-7.6-4.5-8.2-3.6-5.8-2.6-5.3-2.9-2.9-2.9-7.4.7-1.4 1.1-1.3-1.6-2.9-4-3.7-4.8-5.5-3.7-6.3-5.3-9.4-3.7-9.7-2.3-7.3zm17.7 132.7l2.4-.6 1.3-.2 1.5-2.3 2.3-1.6 1.3.5 1.7.3.4 1.1-3.5 1.2-4.2 1.5-2.3 1.2zm13.5-5l1.2 1.1 2.7-2.1 5.3-4.2 3.7-3.9 2.5-6.6 1-1.7.2-3.4-.7.5-1 2.8-1.5 4.6-3.2 5.3-4.4 4.2-3.4 1.9z" />
+    </g>
+    <g id="g_ga" class="g_ga">
+        <title>Georgia</title>
+        <path id="GA" class="lander ga" d="M750.2 444.2l-5.6-.7-1.4 1.6 1.6 4.7-.3 3.9-2.2-.6-.2-3h-5.2l-5.3.7-32.3 1.9-7.7-.3-1.4-1.2-2.5-4.3-.8-3.3-1.6-.9-.5-.5.9-2.2-.4-5.5-1.6-4.5.8-4.9 1.7-4.8-.2-2.5-1.9-.7-.4-3.2-2.8-3.5-1.9-6.2-1.5-7-1.7-4.8-3.8-16-3.5-8-.8-5.3.1-2.3 3.3-.3 13.6-1.6 18.6-2 6.3-1.1.5 1.4-2.2.9-.9 2.2.4 2 1.4 1.6 4.3 2.7 3.2-.1 3.2 4.7.6 1.6 2.3 2.8.5 1.7 4.7 1.8 3 2.2 2.3 3 2.3 1.3 2 1.8 1.4 2.7 2.1 1.9 4.1 1.8 2.7 6 1.7 5.1 2.8.7 2.1 1.9 2 5.7 2.9 1.6 1.7-.8.4 1.2-3.3 6.2.5 2.6-1.5 4.2-2.3 10 .8 6.3z" />
+    </g>
+    <g id="g_ia" class="g_ia">
+        <title>Iowa</title>
+        <path id="IA" class="lander ia" d="M556.8 183.6l2.1 2.1.3.7-2 3 .3 4 2.6 4.1 3.1 1.6 2.4.3.9 1.8.2 2.4 2.5 1 .9 1.1.5 1.6 3.8 3.3.6 1.9-.7 3-1.7 3.7-.6 2.4-2.1 1.6-1.6.5-5.7 1.5-1.6 4.8.8 1.8 1.7 1.5-.2 3.5-1.9 1.4-.7 1.8v2.4l-1.4.4-1.7 1.4-.5 1.7.4 1.7-1.3 1-2.3-2.7-1.4-2.8-8.3.8-10 .6-49.2 1.2-1.6-4.3-.4-6.7-1.4-4.2-.7-5.2-2.2-3.7-1-4.6-2.7-7.8-1.1-5.6-1.4-1.9-1.3-2.9 1.7-3.8 1.2-6.1-2.7-2.2-.3-2.4.7-2.4 1.8-.3 61.1-.6 21.2-.7z" />
+    </g>
+    <g id="g_id" class="g_id">
+        <title>Idaho</title>
+        <path id="ID" class="lander id" d="M175.3 27.63l-4.8 17.41L166 65.9l-3.4 16.22-.4 9.67 1.2 4.44 3.5 2.66-.2 3.91-3.9 4.4-4.5 6.6-.9 2.9-1.2 1.1-1.8.8-4.3 5.3-.4 3.1-.4 1.1.6 1 2.6-.1 1.1 2.3-2.4 5.8-1.2 4.2-8.8 35.3 20.7 4.5 39.5 7.9 34.8 6.1 4.9-29.2 3.8-24.1-2.7-2.4-.4-2.6-.8-1.1-2.1 1-.7 2.6-3.2.5-3.9-1.6-3.8.1-2.5.7-3.4-1.5-2.4.2-2.4 2-2-1.1-.7-4 .7-2.9-2.5-2.9-3.3-2.6-2.7-13.1-.1-4.7-.3-.1-.2.4-5.1 3.5-1.7-.2-2.9-3.4-.2-3.1 7-17.13-.4-1.94-3.4-1.15-.6-1.18-2.6-3.46-4.6-10.23-3.2-1.53-2-4.95 1.3-4.63-3.2-7.58 4.4-21.52z" />
+    </g>
+    <g id="g_il" class="g_il">
+        <title>Illinois</title>
+        <path id="IL" class="lander il" d="M618.7 214.3l-.8-2.6-1.3-3.7-1.6-1.8-1.5-2.6-.4-5.5-15.9 1.8-17.4 1h-12.3l.2 2.1 2.2.9 1.1 1.4.4 1.4 3.9 3.4.7 2.4-.7 3.3-1.7 3.7-.8 2.7-2.4 1.9-1.9.6-5.2 1.3-1.3 4.1.6 1.1 1.9 1.8-.2 4.3-2.1 1.6-.5 1.3v2.8l-1.8.6-1.4 1.2-.4 1.2.4 2-1.6 1.3-.9 2.8.3 3.9 2.3 7 7 7.6 5.7 3.7v4.4l.7 1.2 6.6.6 2.7 1.4-.7 3.5-2.2 6.2-.8 3 2 3.7 6.4 5.3 4.8.8 2.2 5.1 2 3.4-.9 2.8 1.5 3.8 1.7 2.1 1.6-.3 1-2.2 2.4-1.7 2.8-1 6.1 2.5.5-.2v-1.1l-1.2-2.7.4-2.8 2.4-1.6 3.4-1.2-.5-1.3-.8-2 1.2-1.3 1-2.7v-4l.4-4.9 2.5-3 1.8-3.8 2.5-4-.5-5.3-1.8-3.2-.3-3.3.8-5.3-.7-7.2-1.1-15.8-1.4-15.3-.9-11.7z" />
+    </g>
+    <g id="g_in" class="g_in">
+        <title>Indiana</title>
+        <path id="IN" class="lander in" d="M622.9 216.1l1.5 1 1.1-.3 2.1-1.9 2.5-1.8 14.3-1.1 18.4-1.8 1.6 15.5 4.9 42.6-.6 2.9 1.3 1.6.2 1.3-2.3 1.6-3.6 1.7-3.2.4-.5 4.8-4.7 3.6-2.9 4 .2 2.4-.5 1.4h-3.5l-1.4-1.7-5.2 3 .2 3.1-.9.2-.5-.9-2.4-1.7-3.6 1.5-1.4 2.9-1.2-.6-1.6-1.8-4.4.5-5.7 1-2.5 1.3v-2.6l.4-4.7 2.3-2.9 1.8-3.9 2.7-4.2-.5-5.8-1.8-3.1-.3-3.2.8-5.3-.7-7.1-.9-12.6-2.5-30.1z" />
+    </g>
+    <g id="g_ks" class="g_ks">
+        <title>Kansas</title>
+        <path id="KS" class="lander ks" d="M485.9 259.5l-43.8-.6-40.6-1.2-21.7-.9-4.3 64.8 24.3 1 44.7 2.1 46.3.6 12.6-.3.7-35-1.2-11.1-2.5-2-2.4-3-2.3-3.6.6-3 1.7-1.4v-2.1l-.8-.7-2.6-.2-3.5-3.4z" />
+    </g>
+    <g id="g_ky" class="g_ky">
+        <title>Kentucky</title>
+        <path id="KY" class="lander ky" d="M607.2 331.8l12.6-.7.1-4.1h4.3l30.4-3.2 45.1-4.3 5.6-3.6 3.9-2.1.1-1.9 6-7.8 4.1-3.6 2.1-2.4-3.3-2-2.5-2.7-3-3.8-.5-2.2-2.6-1.4-.9-1.9-.2-6.1-2.6-2-1.9-1.1-.5-2.3-1.3.2-2 1.2-2.5 2.7-1.9-1.7-2.5-.5-2.4 1.4h-2.3l-1.8-2-5.6-.1-1.8-4.5-2.9-1.5-2.1.8-4.2.2-.5 2.1 1.2 1.5.3 2.1-2.8 2-3.8 1.8-2.6.4-.5 4.5-4.9 3.6-2.6 3.7.2 2.2-.9 2.3-4.5-.1-1.3-1.3-3.9 2.2.2 3.3-2.4.6-.8-1.4-1.7-1.2-2.7 1.1-1.8 3.5-2.2-1-1.4-1.6-3.7.4-5.6 1-2.8 1.3-1.2 3.4-1 1 1.5 3.7-4.2 1.4-1.9 1.4-.4 2.2 1.2 2.4v2.2l-1.6.4-6.1-2.5-2.3.9-2 1.4-.8 1.8 1.7 2.4-.9 1.8-.1 3.3-2.4 1.3-2.1 1.7z" />
+    </g>
+    <g id="g_la" class="g_la">
+        <title>Louisiana</title>
+        <path id="LA" class="lander la" d="M526.9 485.9l8.1-.3 10.3 3.6 6.5 1.1 3.7-1.5 3.2 1.1 3.2 1 .8-2.1-3.2-1.1-2.6.5-2.7-1.6.8-1.5 3.1-1 1.8 1.5 1.8-1 3.2.6 1.5 2.4.3 2.3 4.5.3 1.8 1.8-.8 1.6-1.3.8 1.6 1.6 8.4 3.6 3.6-1.3 1-2.4 2.6-.6 1.8-1.5 1.3 1 .8 2.9-2.3.8.6.6 3.4-1.3 2.3-3.4.8-.5-2.1-.3.8-1.6-.2-1.5 2.1-.5 1.1-1.3.6.8.6 3.1 4.2.6 4 1.9 1 1.5h2.9l1.1 1 2.3-3.1V493h-1.3l-3.4-2.7-5.8-.8-3.2-2.3 1.1-2.7 2.3.3.2-.6-1.8-1v-.5h3.2l1.8-3.1-1.3-1.9-.3-2.7-1.5.2-1.9 2.1-.6 2.6-3.1-.6-1-1.8 1.8-1.9 1.9-1.7-2.2-6.5-3.4-3.4 1-7.3-.2-.5-1.3.2-33.1 1.4-.8-2.4.8-8.5 8.6-14.8-.9-2.6 1.4-.4.4-2-2.2-2 .1-1.9-2-4.5-.4-5.1.1-.7-26.4.8-25.2.1.4 9.7.7 9.5.5 3.7 2.6 4.5.9 4.4 4.3 6 .3 3.1.6.8-.7 8.3-2.8 4.6 1.2 2.4-.5 2.6-.8 7.3-1.3 3 .2 3.7z" />
+    </g>
+    <g id="g_ma" class="g_ma">
+        <title>Massachusetts</title>
+        <path id="MA" class="lander ma" d="M887.5 172.5l-.5-2.3.8-1.5 2.9-1.5.8 3.1-.5 1.8-2.4 1.5v1l1.9-1.5 3.9-4.5 3.9-1.9 4.2-1.5-.3-2.4-1-2.9-1.9-2.4-1.8-.8-2.1.2-.5.5 1 1.3 1.5-.8 2.1 1.6.8 2.7-1.8 1.8-2.3 1-3.6-.5-3.9-6-2.3-2.6h-1.8l-1.1.8-1.9-2.6.3-1.5 2.4-5.2-2.9-4.4-3.7 1.8-1.8 2.9-18.3 4.7-13.8 2.5-.6 10.6.7 4.9 22-4.8 11.2-2.8 2 1.6 3.4 4.3 2.9 4.7zm12.5 1.4l2.2-.7.5-1.7 1 .1 1 2.3-1.3.5-3.9.1zm-9.4.8l2.3-2.6h1.6l1.8 1.5-2.4 1-2.2 1z" />
+    </g>
+    <g id="g_md" class="g_md">
+        <title>Maryland</title>
+        <path id="MD" class="lander md" d="M834.8 264.1l1.7-3.8.5-4.8-6.3 1.1-5.8.3-3.8-16.8-2.3-5.5-1.5-4.6-22.2 4.3-37.6 7.6 2 10.4 4.8-4.9 2.5-.7 1.4-1.5 1.8-2.7 1.6.7 2.6-.2 2.6-2.1 2-1.5 2.1-.6 1.5 1.1 2.7 1.4 1.9 1.8 1.3 1.4 4.8 1.6-.6 2.9 5.8 2.1 2.1-2.6 3.7 2.5-2.1 3.3-.7 3.3-1.8 2.6v2.1l.3.8 2 1.3 3.4 1.1 4.3-.1 3.1 1 2.1.3 1-2.1-1.5-2.1v-1.8l-2.4-2.1-2.1-5.5 1.3-5.3-.2-2.1-1.3-1.3s1.5-1.6 1.5-2.3c0-.6.5-2.1.5-2.1l1.9-1.3 1.9-1.6.5 1-1.5 1.6-1.3 3.7.3 1.1 1.8.3.5 5.5-2.1 1 .3 3.6.5-.2 1.1-1.9 1.6 1.8-1.6 1.3-.3 3.4 2.6 3.4 3.9.5 1.6-.8 3.2 4.2 1 .4zm-14.5.2l1.1 2.5.2 1.8 1.1 1.9s.9-.9.9-1.2c0-.3-.7-3.1-.7-3.1l-.7-2.3z" />
+    </g>
+    <g id="g_me" class="g_me">
+        <title>Maine</title>
+        <path id="ME" class="lander me" d="M865.8 91.9l1.5.4v-2.6l.8-5.5 2.6-4.7 1.5-4-1.9-2.4v-6l.8-1 .8-2.7-.2-1.5-.2-4.8 1.8-4.8 2.9-8.9 2.1-4.2h1.3l1.3.2v1.1l1.3 2.3 2.7.6.8-.8v-1l4-2.9 1.8-1.8 1.5.2 6 2.4 1.9 1 9.1 29.9h6l.8 1.9.2 4.8 2.9 2.3h.8l.2-.5-.5-1.1 2.8-.5 1.9 2.1 2.3 3.7V85l-2.1 4.7-1.9.6-3.4 3.1-4.8 5.5h-1.3c-.6 0-1-2.1-1-2.1l-1.8.2-1 1.5-2.4 1.5-1 1.5 1.6 1.5-.5.6-.5 2.7-1.9-.2v-1.6l-.3-1.3-1.5.3-1.8-3.2-2.1 1.3 1.3 1.5.3 1.1-.8 1.3.3 3.1.2 1.6-1.6 2.6-2.9.5-.3 2.9-5.3 3.1-1.3.5-1.6-1.5-3.1 3.6 1 3.2-1.5 1.3-.2 4.4-1.1 6.3-2.2-.9-.5-3.1-4-1.1-.2-2.5-11.7-37.43zm36.5 15.6l1.5-1.5 1.4 1.1.6 2.4-1.7.9zm6.7-5.9l1.8 1.9s1.3.1 1.3-.2c0-.3.2-2 .2-2l.9-.8-.8-1.8-2 .7z" />
+    </g>
+    <g id="g_mi" class="g_mi">
+        <title>Michigan</title>
+        <path id="MI" class="lander mi" d="M644.5 211l19.1-1.9.2 1.1 9.9-1.5 12-1.7.1-.6.2-1.5 2.1-3.7 2-1.7-.2-5.1 1.6-1.6 1.1-.3.2-3.6 1.5-3 1.1.6.2.6.8.2 1.9-1-.4-9.1-3.2-8.2-2.3-9.1-2.4-3.2-2.6-1.8-1.6 1.1-3.9 1.8-1.9 5-2.7 3.7-1.1.6-1.5-.6s-2.6-1.5-2.4-2.1c.2-.6.5-5 .5-5l3.4-1.3.8-3.4.6-2.6 2.4-1.6-.3-10-1.6-2.3-1.3-.8-.8-2.1.8-.8 1.6.3.2-1.6-2.6-2.2-1.3-2.6h-2.6l-4.5-1.5-5.5-3.4h-2.7l-.6.6-1-.5-3.1-2.3-2.9 1.8-2.9 2.3.3 3.6 1 .3 2.1.5.5.8-2.6.8-2.6.3-1.5 1.8-.3 2.1.3 1.6.3 5.5-3.6 2.1-.6-.2v-4.2l1.3-2.4.6-2.4-.8-.8-1.9.8-1 4.2-2.7 1.1-1.8 1.9-.2 1 .6.8-.6 2.6-2.3.5v1.1l.8 2.4-1.1 6.1-1.6 4 .6 4.7.5 1.1-.8 2.4-.3.8-.3 2.7 3.6 6 2.9 6.5 1.5 4.8-.8 4.7-1 6-2.4 5.2-.3 2.7-3.2 3.1zm-33.3-72.4l-1.3-1.1-1.8-10.4-3.7-1.3-1.7-2.3-12.6-2.8-2.8-1.1-8.1-2.2-7.8-1-3.9-5.3.7-.5 2.7-.8 3.6-2.3v-1l.6-.6 6-1 2.4-1.9 4.4-2.1.2-1.3 1.9-2.9 1.8-.8 1.3-1.8 2.3-2.3 4.4-2.4 4.7-.5 1.1 1.1-.3 1-3.7 1-1.5 3.1-2.3.8-.5 2.4-2.4 3.2-.3 2.6.8.5 1-1.1 3.6-2.9 1.3 1.3h2.3l3.2 1 1.5 1.1 1.5 3.1 2.7 2.7 3.9-.2 1.5-1 1.6 1.3 1.6.5 1.3-.8h1.1l1.6-1 4-3.6 3.4-1.1 6.6-.3 4.5-1.9 2.6-1.3 1.5.2v5.7l.5.3 2.9.8 1.9-.5 6.1-1.6 1.1-1.1 1.5.5v7l3.2 3.1 1.3.6 1.3 1-1.3.3-.8-.3-3.7-.5-2.1.6-2.3-.2-3.2 1.5h-1.8l-5.8-1.3-5.2.2-1.9 2.6-7 .6-2.4.8-1.1 3.1-1.3 1.1-.5-.2-1.5-1.6-4.5 2.4h-.6l-1.1-1.6-.8.2-1.9 4.4-1 4-3.2 6.9zm-29.6-56.5l1.8-2.1 2.2-.8 5.4-3.9 2.3-.6.5.5-5.1 5.1-3.3 1.9-2.1.9zm86.2 32.1l.6 2.5 3.2.2 1.3-1.2s-.1-1.5-.4-1.6c-.3-.2-1.6-1.9-1.6-1.9l-2.2.2-1.6.2-.3 1.1z" />
+    </g>
+    <g id="g_mn" class="g_mn">
+        <title>Minnesota</title>
+        <path id="MN" class="lander mn" d="M464.6 66.79l-.6 3.91v10.27l1.6 5.03 1.9 3.32.5 9.93 1.8 13.45 1.8 7.3.4 6.4v5.3l-1.6 1.8-1.8 1.3v1.5l.9 1.7 4.1 3.5.7 3.2v35.9l60.3-.6 21.2-.7-.5-6-1.8-2.1-7.2-4.6-3.6-5.3-3.4-.9-2-2.8h-3.2l-3.5-3.8-.5-7 .1-3.9 1.5-3-.7-2.7-2.8-3.1 2.2-6.1 5.4-4 1.2-1.4-.2-8 .2-3 2.6-3 3.8-2.9 1.3-.2 4.5-5 1.8-.8 2.3-3.9 2.4-3.6 3.1-2.6 4.8-2 9.2-4.1 3.9-1.8.6-2.3-4.4.4-.7 1.1h-.6l-1.8-3.1-8.9.3-1 .8h-1l-.5-1.3-.8-1.8-2.6.5-3.2 3.2-1.6.8h-3.1l-2.6-1v-2.1l-1.3-.2-.5.5-2.6-1.3-.5-2.9-1.5.5-.5 1-2.4-.5-5.3-2.4-3.9-2.6h-2.9l-1.3-1-2.3.6-1.1 1.1-.3 1.3h-4.8v-2.1l-6.3-.3-.3-1.5h-4.8l-1.6-1.6-1.5-6.1-.8-5.5-1.9-.8-2.3-.5-.6.2-.3 8.2-30.1-.03z" />
+    </g>
+    <g id="g_mo" class="g_mo">
+        <title>Missouri</title>
+        <path id="MO" class="lander mo" d="M593.1 338.7l.5-5.9 4.2-3.4 1.9-1v-2.9l.7-1.6-1.1-1.6-2.4.3-2.1-2.5-1.7-4.5.9-2.6-2-3.2-1.8-4.6-4.6-.7-6.8-5.6-2.2-4.2.8-3.3 2.2-6 .6-3-1.9-1-6.9-.6-1.1-1.9v-4.1l-5.3-3.5-7.2-7.8-2.3-7.3-.5-4.2.7-2.4-2.6-3.1-1.2-2.4-7.7.8-10 .6-48.8 1.2 1.3 2.6-.1 2.2 2.3 3.6 3 3.9 3.1 3 2.6.2 1.4 1.1v2.9l-1.8 1.6-.5 2.3 2.1 3.2 2.4 3 2.6 2.1 1.3 11.6-.8 40 .5 5.7 23.7-.2 23.3-.7 32.5-1.3 2.2 3.7-.8 3.1-3.1 2.5-.5 1.8 5.2.5 4.1-1.1z" />
+    </g>
+    <g id="g_ms" class="g_ms">
+        <title>Mississippi</title>
+        <path id="MS" class="lander ms" d="M604.3 472.5l2.6-4.2 1.8.8 6.8-1.9 2.1.3 1.5.8h5.2l.4-1.6-1.7-14.8-2.8-19 1-45.1-.2-16.7.2-6.3-4.8.3-19.6 1.6-13 .4-.2 3.2-2.8 1.3-2.6 5.1.5 1.6.1 2.4-2.9 1.1-3.5 5.1.8 2.3-3 2.5-1 5.7-.6 1.9 1.6 2.5-1.5 1.4 1.5 2.8.3 4.2-1.2 2.5-.2.9.4 5 2 4.5-.1 1.7 2.3 2-.7 3.1-.9.3.6 1.9-8.6 15-.8 8.2.5 1.5 24.2-.7 8.2-.7 1.9-.3.6 1.4-1 7.1 3.3 3.3 2.2 6.4z" />
+    </g>
+    <g id="g_mt" class="g_mt">
+        <title>Montana</title>
+        <path id="MT" class="lander mt" d="M361.1 70.77l-5.3 57.13-1.3 15.2-59.1-6.6-49-7.1-1.4 11.2-1.9-1.7-.4-2.5-1.3-1.9-3.3 1.5-.7 2.5-2.3.3-3.8-1.6-4.1.1-2.4.7-3.2-1.5-3 .2-2.1 1.9-.9-.6-.7-3.4.7-3.2-2.7-3.2-3.3-2.5-2.5-12.6-.1-5.3-1.6-.8-.6 1-4.5 3.2-1.2-.1-2.3-2.8-.2-2.8 7-17.15-.6-2.67-3.5-1.12-.4-.91-2.7-3.5-4.6-10.41-3.2-1.58-1.8-4.26 1.3-4.63-3.2-7.57 4.4-21.29L222 37.3l18.4 3.4 32.3 5.3 29.3 4 29.2 3.5 30.8 3.07z" />
+    </g>
+    <g id="g_nc" class="g_nc">
+        <title>North Carolina</title>
+        <path id="NC" class="lander nc" d="M786.7 357.7L774 350l-3.1-.8-16.6 2.1-1.6-3-2.8-2.2-16.7.5-7.4.9-9.2 4.5-6.8 2.7-6.5 1.2-13.4 1.4.1-4.1 1.7-1.3 2.7-.7.7-3.8 3.9-2.5 3.9-1.5 4.5-3.7 4.4-2.3.7-3.2 4.1-3.8.7 1 2.5.2 2.4-3.6 1.7-.4 2.6.3 1.8-4 2.5-2.4.5-1.8.1-3.5 4.4.1 38.5-5.6 57.5-12.3 2 4.8 3.6 6.5 2.4 2.4.6 2.3-2.4.2.8.6-.3 4.2-2.6 1.3-.6 2.1-1.3 2.9-3.7 1.6-2.4-.3-1.5-.2-1.6-1.3.3 1.3v1h1.9l.8 1.3-1.9 6.3h4.2l.6 1.6 2.3-2.3 1.3-.5-1.9 3.6-3.1 4.8H828l-1.1-.5-2.7.6-5.2 2.4-6.5 5.3-3.4 4.7-1.9 6.5-.5 2.4-4.7.5-5.1 1.5zm49.3-26.2l2.6-2.5 3.2-2.6 1.5-.6.2-2-.6-6.1-1.5-2.3-.6-1.9.7-.2 2.7 5.5.4 4.4-.2 3.4-3.4 1.5-2.8 2.4-1.1 1.2z" />
+    </g>
+    <g id="g_nd" class="g_nd">
+        <title>North Dakota</title>
+        <path id="ND" class="lander nd" d="M471 126.4l-.4-6.2-1.8-7.3-1.8-13.61-.5-9.7-1.9-3.18-1.6-5.32V70.68l.6-3.85-1.8-5.54-28.6-.59-18.6-.6-26.5-1.3-25.2-2.16-.9 14.42-4.7 50.94 56.8 3.9 56.9 1.7z" />
+    </g>
+    <g id="g_ne" class="g_ne">
+        <title>Nebraska</title>
+        <path id="NE" class="lander ne" d="M470.3 204.3l-1-2.3-.5-1.6-2.9-1.6-4.8-1.5-2.2-1.2-2.6.1-3.7.4-4.2 1.2-6-4.1-2.2-2-10.7.6-41.5-2.4-35.6-2.2-4.3 43.7 33.1 3.3-1.4 21.1 21.7 1 40.6 1.2 43.8.6h4.5l-2.2-3-2.6-3.9.1-2.3-1.4-2.7-1.9-5.2-.4-6.7-1.4-4.1-.5-5-2.3-3.7-1-4.7-2.8-7.9-1-5.3z" />
+    </g>
+    <g id="g_nh" class="g_nh">
+        <title>New Hampshire</title>
+        <path id="NH" class="lander nh" d="M881.7 141.3l1.1-3.2-2.7-1.2-.5-3.1-4.1-1.1-.3-3-11.7-37.48-.7.08-.6 1.6-.6-.5-1-1-1.5 1.9-.2 2.29.5 8.41 1.9 2.8v4.3l-3.9 4.8-2.4.9v.7l1.1 1.9v8.6l-.8 9.2-.2 4.7 1 1.4-.2 4.7-.5 1.5 1 1.1 5.1-1.2 13.8-3.5 1.7-2.9 4-1.9z" />
+    </g>
+    <g id="g_nj" class="g_nj">
+        <title>New Jersey</title>
+        <path id="NJ" class="lander nj" d="M823.7 228.3l.1-1.5 2.7-1.3 1.7-2.8 1.7-2.4 3.3-3.2v-1.2l-6.1-4.1-1-2.7-2.7-.3-.1-.9-.7-2.2 2.2-1.1.2-2.9-1.3-1.3.2-1.2 1.9-3.1V193l2.5-3.1 5.6 2.5 6.4 1.9 2.5 1.2.1 1.8-.5 2.7.4 4.5-2.1 1.9-1.1 1 .5.5 2.7-.3 1.1-.8 1.6 3.4.2 9.4.6 1.1-1.1 5.5-3.1 6.5-2.7 4-.8 4.8-2.1 2.4h-.8l-.3-2.7.8-1-.2-1.5-4-.6-4.8-2.3-3.2-2.9-1-2z" />
+    </g>
+    <g id="g_nm" class="g_nm">
+        <title>New Mexico</title>
+        <path id="NM" class="lander nm" d="M270.2 429.4l-16.7-2.6-1.2 9.6-15.8-2 6-39.7 7-53.2 4.4-30.9 34 3.9 37.4 4.4 32 2.8-.3 10.8-1.4-.1-7.4 97.7-28.4-1.8-38.1-3.7.7 6.3z" />
+    </g>
+    <g id="g_nv" class="g_nv">
+        <title>Nevada</title>
+        <path id="NV" class="lander nv" d="M123.1 173.6l38.7 8.5 26 5.2-10.6 53.1-5.4 29.8-3.3 15.5-2.1 11.1-2.6 16.4-1.7 3.1-1.6-.1-1.2-2.6-2.8-.5-1.3-1.1-1.8.1-.9.8-1.8 1.3-.3 7.3-.3 1.5-.5 12.4-1.1 1.8-16.7-25.5-42.1-62.1-12.43-19 8.55-32.6 8.01-31.3z" />
+    </g>
+    <g id="g_ny" class="g_ny">
+        <title>New York</title>
+        <path id="NY" class="lander ny" d="M843.4 200l.5-2.7-.2-2.4-3-1.5-6.5-2-6-2.6-.6-.4-2.7-.3-2-1.5-2.1-5.9-3.3-.5-2.4-2.4-38.4 8.1-31.6 6-.5-6.5 1.6-1.2 1.3-1.1 1-1.6 1.8-1.1 1.9-1.8.5-1.6 2.1-2.7 1.1-1-.2-1-1.3-3.1-1.8-.2-1.9-6.1 2.9-1.8 4.4-1.5 4-1.3 3.2-.5 6.3-.2 1.9 1.3 1.6.2 2.1-1.3 2.6-1.1 5.2-.5 2.1-1.8 1.8-3.2 1.6-1.9h2.1l1.9-1.1.2-2.3-1.5-2.1-.3-1.5 1.1-2.1v-1.5h-1.8l-1.8-.8-.8-1.1-.2-2.6 5.8-5.5.6-.8 1.5-2.9 2.9-4.5 2.7-3.7 2.1-2.4 2.4-1.8 3.1-1.2 5.5-1.3 3.2.2 4.5-1.5 7.4-2.2.7 4.9 2.4 6.5.8 5-1 4.2 2.6 4.5.8 2-.9 3.2 3.7 1.7 2.7 10.2v5.8l-.6 10.9.8 5.4.7 3.6 1.5 7.3v8.1l-1.1 2.3 2.1 2.7.5.9-1.9 1.8.3 1.3 1.3-.3 1.5-1.3 2.3-2.6 1.1-.6 1.6.6 2.3.2 7.9-3.9 2.9-2.7 1.3-1.5 4.2 1.6-3.4 3.6-3.9 2.9-7.1 5.3-2.6 1-5.8 1.9-4 1.1-1-.4z" />
+    </g>
+    <g id="g_oh" class="g_oh">
+        <title>Ohio</title>
+        <path id="OH" class="lander oh" d="M663.8 211.2l1.7 15.5 4.8 41.1 3.9-.2 2.3-.8 3.6 1.8 1.7 4.2 5.4.1 1.8 2h1.7l2.4-1.4 3.1.5 1.5 1.3 1.8-2 2.3-1.4 2.4-.4.6 2.7 1.6 1 2.6 2 .8.2 2-.1 1.2-.6v-2.1l1.7-1.5.1-4.8 1.1-4.2 1.9-1.3 1 .7 1 1.1.7.2.4-.4-.9-2.7v-2.2l1.1-1.4 2.5-3.6 1.3-1.5 2.2.5 2.1-1.5 3-3.3 2.2-3.7.2-5.4.5-5V230l-1.2-3.2 1.2-1.8 1.3-1.2-.6-2.8-4.3-25.6-6.2 3.7-3.9 2.3-3.4 3.7-4 3.9-3.2.8-2.9.5-5.5 2.6-2.1.2-3.4-3.1-5.2.6-2.6-1.5-2.2-1.3z" />
+    </g>
+    <g id="g_ok" class="g_ok">
+        <title>Oklahoma</title>
+        <path id="OK" class="lander ok" d="M411.9 334.9l-1.8 24.3-.9 18 .2 1.6 4 3.6 1.7.9h.9l.9-2.1 1.5 1.9 1.6.1.3-.2.2-1.1 2.8 1.4-.4 3.5 3.8.5 2.5 1 4.2.6 2.3 1.6 2.5-1.7 3.5.7 2.2 3.1 1.2.1v2.3l2.1.7 2.5-2.1 1.8.6 2.7.1.7 2.3 4.4 1.8 1.7-.3 1.9-4.2h1.3l1.1 2.1 4.2.8 3.4 1.3 3 .8 1.6-.7.7-2.7h4.5l1.9.9 2.7-1.9h1.4l.6 1.4h3.6l2-1.8 2.3.6 1.7 2.2 3 1.7 3.4.9 1.9 1.2-.3-37.6-1.4-10.9-.1-8.6-1.5-6.6-.6-6.8.1-4.3-12.6.3-46.3-.5-44.7-2.1-41.5-1.8-.4 10.7z" />
+    </g>
+    <g id="g_or" class="g_or">
+        <title>Oregon</title>
+        <path id="OR" class="lander or" d="M67.44 158.9l28.24 7.2 27.52 6.5 17 3.7 8.8-35.1 1.2-4.4 2.4-5.5-.7-1.3-2.5.1-1.3-1.8.6-1.5.4-3.3 4.7-5.7 1.9-.9.9-.8.7-2.7.8-1.1 3.9-5.7 3.7-4 .2-3.26-3.4-2.49-1.2-4.55-13.1-3.83L132.9 85l-14.8.37-1.1-1.31-5.1 1.84-4.5-.48-2.4-1.58-1.3.54-4.68-.29-1.96-1.43-4.84-1.77-1.1-.07-4.45-1.27-1.76 1.52-6.26-.24-5.31-3.85.21-9.28-2.05-3.5-4.1-.6-.7-2.5-2.4-.5-5.8 2.1-2.3 6.5-3.2 10-3.2 6.5-5 14.1-6.5 13.6-8.1 12.6-1.9 2.9-.8 8.6-1.3 6 2.71 3.5z" />
+    </g>
+    <g id="g_pa" class="g_pa">
+        <title>Pennsylvania</title>
+        <path id="PA" class="lander pa" d="M736.6 192.2l1.3-.5 5.7-5.5.7 6.9 33.5-6.5 36.9-7.8 2.3 2.3 3.1.4 2 5.6 2.4 1.9 2.8.4.1.1-2.6 3.2v3.1l-1.9 3.1-.2 1.9 1.3 1.3-.2 1.9-2.4 1.1 1 3.4.2 1.1 2.8.3.9 2.5 5.9 3.9v.4l-3.1 3-1.5 2.2-1.7 2.8-2.7 1.2-1.4.3-2.1 1.3-1.6 1.4-22.4 4.3L757 241l-11.3 1.4-3.9.7-5.1-22.4-4.3-25.9z" />
+    </g>
+    <g id="g_ri" class="g_ri">
+        <title>Rhode Island</title>
+        <path id="RI" class="lander ri" d="M873.6 175.7l-.8-4.4-1.6-6 5.7-1.5 1.5 1.3 3.4 4.3 2.8 4.4-2.8 1.4-1.3-.2-1.1 1.8-2.4 1.9-2.8 1.1z" />
+    </g>
+    <g id="g_sc" class="g_sc">
+        <title>South Carolina</title>
+        <path id="SC" class="lander sc" d="M759 413.6l-2.1-1-1.9-5.6-2.5-2.3-2.5-.5-1.5-4.6-3-6.5-4.2-1.8-1.9-1.8-1.2-2.6-2.4-2-2.3-1.3-2.2-2.9-3.2-2.4-4.4-1.7-.4-1.4-2.3-2.8-.5-1.5-3.8-5.4-3.4.1-3.9-2.5-1.2-1.2-.2-1.4.6-1.6 2.7-1.3-.8-2 6.4-2.7 9.2-4.5 7.1-.9 16.4-.5 2.3 1.9 1.8 3.5 4.6-.8 12.6-1.5 2.7.8 12.5 7.4 10.1 8.3-5.3 5.4-2.6 6.1-.5 6.3-1.6.8-1.1 2.7-2.4.6-2.1 3.6-2.7 2.7-2.3 3.4-1.6.8-3.6 3.4-2.9.2 1 3.2-5 5.3-2.3 1.6z" />
+    </g>
+    <g id="g_sd" class="g_sd">
+        <title>South Dakota</title>
+        <path id="SD" class="lander sd" d="M471 181.1l-.9 3.2.4 3 2.6 2-1.2 5.4-1.8 4.1 1.5 3.3.7 1.1-1.3.1-.7-1.6-.6-2-3.3-1.8-4.8-1.5-2.5-1.3-2.9.1-3.9.4-3.8 1.2-5.3-3.8-2.7-2.4-10.9.8-41.5-2.4-35.6-2.2L354 162l2.8-34 .4-5 56.9 3.9 56.9 1.7v2.7l-1.3 1.5-2 1.5-.1 2.2 1.1 2.2 4.1 3.4.5 2.7v35.9z" />
+    </g>
+    <g id="g_tn" class="g_tn">
+        <title>Tennessee</title>
+        <path id="TN" class="lander tn" d="M670.8 359.6l-13.1 1.2-23.3 2.2-37.6 2.7-11.8.4.9-.6.9-4.5-1.2-3.6 3.9-2.3.4-2.5 1.2-4.3 3-9.5.5-5.6.3-.2 12.3-.2 13.6-.8.1-3.9 3.5-.1 30.4-3.3 54-5.2 10.3-1.5 7.6-.2 2.4-1.9 1.3.3-.1 3.3-.4 1.6-2.4 2.2-1.6 3.6-2-.4-2.4.9-2.2 3.3-1.4-.2-.8-1.2-1.1.4-4.3 4-.8 3.1-4.2 2.2-4.3 3.6-3.8 1.5-4.4 2.8-.6 3.6-2.5.5-2 1.7-.2 4.8z" />
+    </g>
+    <g id="g_tx" class="g_tx">
+        <title>Texas</title>
+        <path id="TX" class="lander tx" d="M282.8 425.6l37 3.6 29.3 1.9 7.4-97.7 54.4 2.4-1.7 23.3-1 18 .2 2 4.4 4.1 2 1.1h1.8l.5-1.2.7.9 2.4.2 1.1-.6v-.2l1 .5-.4 3.7 4.5.7 2.4.9 4.2.7 2.6 1.8 2.8-1.9 2.7.6 2.2 3.1.8.1v2.1l3.3 1.1 2.5-2.1 1.5.5 2.1.1.6 2.1 5.2 2 2.3-.5 1.9-4h.1l1.1 1.9 4.6.9 3.4 1.3 3.2 1 2.4-1.2.7-2.3h3.6l2.1 1 3-2h.4l.5 1.4h4.7l1.9-1.8 1.3.4 1.7 2.1 3.3 1.9 3.4 1 2.5 1.4 2.7 2 3.1-1.2 2.1.8.7 20 .7 9.5.6 4.1 2.6 4.4.9 4.5 4.2 5.9.3 3.1.6.8-.7 7.7-2.9 4.8 1.3 2.6-.5 2.4-.8 7.2-1.3 3 .3 4.2-5.6 1.6-9.9 4.5-1 1.9-2.6 1.9-2.1 1.5-1.3.8-5.7 5.3-2.7 2.1-5.3 3.2-5.7 2.4-6.3 3.4-1.8 1.5-5.8 3.6-3.4.6-3.9 5.5-4 .3-1 1.9 2.3 1.9-1.5 5.5-1.3 4.5-1.1 3.9-.8 4.5.8 2.4 1.8 7 1 6.1 1.8 2.7-1 1.5-3.1 1.9-5.7-3.9-5.5-1.1-1.3.5-3.2-.6-4.2-3.1-5.2-1.1-7.6-3.4-2.1-3.9-1.3-6.5-3.2-1.9-.6-2.3.6-.6.3-3.4-1.3-.6-.6-1 1.3-4.4-1.6-2.3-3.2-1.3-3.4-4.4-3.6-6.6-4.2-2.6.2-1.9-5.3-12.3-.8-4.2-1.8-1.9-.2-1.5-6-5.3-2.6-3.1v-1.1l-2.6-2.1-6.8-1.1-7.4-.6-3.1-2.3-4.5 1.8-3.6 1.5-2.3 3.2-1 3.7-4.4 6.1-2.4 2.4-2.6-1-1.8-1.1-1.9-.6-3.9-2.3v-.6l-1.8-1.9-5.2-2.1-7.4-7.8-2.3-4.7v-8.1l-3.2-6.5-.5-2.7-1.6-1-1.1-2.1-5-2.1-1.3-1.6-7.1-7.9-1.3-3.2-4.7-2.3-1.5-4.4-2.6-2.9-1.7-.5zm174.4 141.7l-.6-7.1-2.7-7.2-.6-7 1.5-8.2 3.3-6.9 3.5-5.4 3.2-3.6.6.2-4.8 6.6-4.4 6.5-2 6.6-.3 5.2.9 6.1 2.6 7.2.5 5.2.2 1.5z" />
+    </g>
+    <g id="g_ut" class="g_ut">
+        <title>Utah</title>
+        <path id="UT" class="lander ut" d="M228.4 305.9l24.6 3.6 1.9-13.7 7-50.5 2.3-22-32.2-3.5 2.2-13.1 1.8-10.6-34.7-6.1-12.5-2.5-10.6 52.9-5.4 30-3.3 15.4-1.7 9.2z" />
+    </g>
+    <g id="g_va" class="g_va">
+        <title>Virginia</title>
+        <path id="VA" class="lander va" d="M834.7 265.2l-.2 2.8-2.9 3.8-.4 4.6.5 3.4-1.8 5-2.2 1.9-1.5-4.6.4-5.4 1.6-4.2.7-3.3-.1-1.7zm-60.3 44.6l-38.6 5.6-4.8-.1-2.2-.3-2.5 1.9-7.3.1-10.3 1.6-6.7.6 4.1-2.6 4.1-2.3v-2.1l5.7-7.3 4.1-3.7 2.2-2.5 3.6 4.3 3.8.9 2.7-1 2-1.5 2.4 1.2 4.6-1.3 1.7-4.4 2.4.7 3.2-2.3 1.6.4 2.8-3.2.2-2.7-.8-1.2 4.8-10.5 1.8-5.2.5-4.7.7-.2 1.1 1.7 1.5 1.2 3.9-.2 1.7-8.1 3-.6.8-2.6 2.8-2.2 1.1-2.1 1.8-4.3.1-4.6 3.6 1.4 6.6 3.1.3-5.2 3.4 1.2-.6 2.9 8.6 3.1 1.4 1.8-.8 3.3-1.3 1.3-.5 1.7.5 2.4 2 1.3 3.9 1.4 2.9 1 4.9.9 2.2 2.1 3.2.4.9 1.2-.4 4.7 1.4 1.1-.5 1.9 1.2.8-.2 1.4-2.7-.1.1 1.6 2.3 1.5.1 1.4 1.8 1.8.5 2.5-2.6 1.4 1.6 1.5 5.8-1.7 3.7 6.2z" />
+    </g>
+    <g id="g_vt" class="g_vt">
+        <title>Vermont</title>
+        <path id="VT" class="lander vt" d="M832.7 111.3l2.4 6.5.8 5.3-1 3.9 2.5 4.4.9 2.3-.7 2.6 3.3 1.5 2.9 10.8v5.3l11.5-2.1-1-1.1.6-1.9.2-4.3-1-1.4.2-4.7.8-9.3v-8.5l-1.1-1.8v-1.6l2.8-1.1 3.5-4.4v-3.6l-1.9-2.7-.3-5.79-26.1 6.79z" />
+    </g>
+    <g id="g_wa" class="g_wa">
+        <title>Washington</title>
+        <path id="WA" class="lander wa" d="M74.5 67.7l-2.3-4.3-4.1-.7-.4-2.4-2.5-.6-2.9-.5-1.8 1-2.3-2.9.3-2.9 2.7-.3 1.6-4-2.6-1.1.2-3.7 4.4-.6-2.7-2.7-1.5-7.1.6-2.9v-7.9l-1.8-3.2 2.3-9.4 2.1.5 2.4 2.9 2.7 2.6 3.2 1.9 4.5 2.1 3.1.6 2.9 1.5 3.4 1 2.3-.2V22l1.3-1.1 2.1-1.3.3 1.1.3 1.8-2.3.5-.3 2.1 1.8 1.5 1.1 2.4.6 1.9 1.5-.2.2-1.3-1-1.3-.5-3.2.8-1.8-.6-1.5V19l1.8-3.6-1.1-2.6L91.9 8l.3-.8 1.4-.8L98 7.9l9.7 2.7 8.6 1.9 20 5.7 23 5.7 15 3.49-4.8 17.56-4.5 20.83-3.4 16.25-.4 9.18-12.9-3.72-15.3-3.47-14.5.32-1.1-1.53-5.7 2.09-3.9-.42-2.6-1.79-1.7.65-4.15-.25-1.72-1.32-5.16-1.82-1.18-.16-4.8-1.39-1.92 1.65-5.65-.25-4.61-3.35zm9.6-55.4l2-.2.5 1.4 1.5-1.6h2.3l.8 1.5-1.5 1.7.6.8-.7 2-1.4.4s-.9.1-.9-.2c0-.3 1.5-2.6 1.5-2.6l-1.7-.6-.3 1.5-.7.6-1.5-2.3z" />
+    </g>
+    <g id="g_wi" class="g_wi">
+        <title>Wisconsin</title>
+        <path id="WI" class="lander wi" d="M541.4 109.9l2.9.5 2.9-.6 7.4-3.2 2.9-1.9 2.1-.8 1.9 1.5-1.1 1.1-1.9 3.1-.6 1.9 1 .6 1.8-1 1.1-.2 2.7.8.6 1.1 1.1.2.6-1.1 4 5.3 8.2 1.2 8.2 2.2 2.6 1.1 12.3 2.6 1.6 2.3 3.6 1.2L609 138l1.6 1.4 1.5.9-1.1 2.3-1.8 1.6-2.1 4.7-1.3 2.4.2 1.8 1.5.3 1.1-1.9 1.5-.8.8-2.3 1.9-1.8 2.7-4 4.2-6.3.8-.5.3 1-.2 2.3-2.9 6.8-2.7 5.7-.5 3.2-.6 2.6.8 1.3-.2 2.7-1.9 2.4-.5 1.8.6 3.6.6 3.4-1.5 2.6-.8 2.9-1 3.1 1.1 2.4.6 6.1 1.6 4.5-.2 3-15.9 1.8-17.5 1H567l-.7-1.5-2.9-.4-2.6-1.3-2.3-3.7-.3-3.6 2-2.9-.5-1.4-2.1-2.2-.8-3.3-.6-6.8-2.1-2.5-7-4.5-3.8-5.4-3.4-1-2.2-2.8h-3.2l-2.9-3.3-.5-6.5.1-3.8 1.5-3.1-.8-3.2-2.5-2.8 1.8-5.4 5.2-3.8 1.6-1.9-.2-8.1.2-2.8 2.4-2.8z" />
+    </g>
+    <g id="g_wv" class="g_wv">
+        <title>West Virginia</title>
+        <path id="WV" class="lander wv" d="M758.9 254.3l5.8-6 2.6-.8 1.6-1.5 1.5-2.2 1.1.3 3.1-.2 4.6-3.6 1.5-.5 1.3 1 2.6 1.2 3 3-.4 4.3-5.4-2.6-4.8-1.8-.1 5.9-2.6 5.7-2.9 2.4-.8 2.3-3 .5-1.7 8.1-2.8.2-1.1-1-1.2-2-2.2.5-.5 5.1-1.8 5.1-5 11 .9 1.4-.1 2-2.2 2.5-1.6-.4-3.1 2.3-2.8-.8-1.8 4.9-3.8 1-2.5-1.3-2.5 1.9-2.3.7-3.2-.8-3.8-4.5-3.5-2.2-2.5-2.5-2.9-3.7-.5-2.3-2.8-1.7-.6-1.3-.2-5.6.3.1 2.4-.2 1.8-1V275l1.7-1.5.1-5.2.9-3.6 1.1-.7.4.3 1 1.1 1.7.5 1.1-1.3-1-3.1v-1.6l3.1-4.6 1.2-1.3 2 .5 2.6-1.8 3.1-3.4 2.4-4.1.2-5.6.5-4.8v-4.9l-1.1-3 .9-1.3.8-.7 4.3 19.3 4.3-.8 11.2-1.3z" />
+    </g>
+    <g id="g_wy" class="g_wy">
+        <title>Wyoming</title>
+        <path id="WY" class="lander wy" d="M353 161.9l-1.5 25.4-4.4 44-2.7-.3-83.3-9.1-27.9-3 2-12 6.9-41 3.8-24.2 1.3-11.2 48.2 7 59.1 6.5z" />
+    </g>
+</svg>
+</div>
+<div id='counter' class='stat'>0/50</div>
+<div id='timer' class='stat'>0:00</div>
+<div id='userpanel'>
+    <div id='userinput'>
+        <input type='text' id='intext' onkeydown='handleKeyDown(event)' />
+    </div>
+    <div id='suggest'></div>
+</div>
+<div id="configpanel" class="panel">
+  <div style="text-align: center">
+  <span style="font-weight: bold">CONFIG</span>
+  </div>
+    <div><label for='cfgcounter'>
+    <input type='checkbox' class='cfg' id='cfgcounter' checked='checked' onchange='handleCounterChange(this)' /> Show Counter
+    </label></div>
+    <div><label for='cfgtimer'>
+    <input type='checkbox' class='cfg' id='cfgtimer' checked='checked' onchange='handleTimerChange(this)' /> Show Timer
+    </label></div>
+    <div><label for='cfgspot'>
+    <input type='checkbox' class='cfg' id='cfgspot' checked='checked' onchange='handleSpotChange(this)' /> Show Spot
+    </label></div>
+    <div><label for='cfgfullname'>
+    <input type='checkbox' class='cfg' id='cfgfullname' /> Full Name
+    </label></div>
+    <br>
+    <span id='changeNote'>Changing below options will restart</span><br>
+    <div><label for='cfgconnect'>
+    <input type='checkbox' class='cfg' id='cfgconnect' /> Connect
+    </label></div>
+    <div><label for='cfgfollow'>
+    <input type='checkbox' class='cfg' id='cfgfollow' /> Follow
+    </label></div>
+    <div><label for='cfghidden'>
+    <input type='checkbox' class='cfg' id='cfghidden' onchange='handleHiddenChange(this)' /> Hide
+    </label></div>
+    <br>
+    <div style='text-align: center'>
+        <input type='button' class='' id='cfgdone' onclick='closeConfig()' value='Done' />
+    </div>
+</div>
+<div id="helppanel" class="panel">
+  <div style="text-align: center">
+  <span style="font-weight: bold">HELP</span>
+  </div>
+    <p>
+    '<span id='helpKeyComplete'></span>' Show completions (at least two chars must be entered)<br>
+    '<span id='helpKeyNeighbor'></span>' Show neighbors<br>
+    '<span id='helpKeyConfig'  ></span>' Toggle config<br>
+    '<span id='helpKeyHelp'    ></span>' Toggle help<br>
+    '<span id='helpKeyEnter'   ></span>' Toggle zoom (input must be empty)<br>
+    </p>
+    <p>
+    On the <b>CONFIG</b> panel:<br>
+    <i>Fullname</i>: Complete name must be entered.<br>
+    <i>Connect</i>: Entered name must be a neighbor.<br>
+    <i>Follow</i>: The name the highlighted element must be entered.<br>
+    <i>Hide</i>: Hides all elements.<br>
+    <br>
+    If <i>Fullname</i> is unselected, partial names may be supplied, but must be long enough to be unambiguous. Mouse over an element to see its name.<br>
+    </p>
+    <p>
+    If both <i>Connect</i> and <i>Follow</i> are selected, a random path which visits all elements will be generated. The path that is generated may be inefficient. This inefficiency is intentional because efficient paths tend to be extremely similar.<br>
+    </p>
+    The following query parameters (with value 1 or 0) will override config settings: <i>counter</i>, <i>timer</i>, <i>spot</i>, <i>fullname</i>, <i>connect</i>, <i>follow</i>, <i>hide</i>, <i>debug</i>, <i>auto</i>. e.g. '?follow=1&hide=1&spot=0'. Reload page to restart.<br>
+    <br>
+    <div style='text-align: center'>
+        <input type='button' class='' id='cfgdone' onclick='closeHelp()' value='Done' />
+    </div>
+</div>
+<div id="completedpanel" class="panel">
+  <div style="text-align: center">
+  <span style="font-weight: bold">COMPLETE</span>
+  </div>
+    <p id='completedtext'>
+    </p>
+    <div style='text-align: center'>
+        <input type='button' class='' id='completeddone' onclick='closeCompleted()' value='OK' />
+        <input type='button' class='' id='completedrestart' onclick='restart()' value='Restart' />
+    </div>
+</div>
+</body>
+</html>

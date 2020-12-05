@@ -1,0 +1,18 @@
+{
+    'svgname': 'world-map.svg',
+    'nodes': [
+        ['co', 'Columbia', ['co']],
+        ['ec', 'Ecuador', ['Ecuador_mainland']],
+        ['pe', 'Peru', ['pe']],
+        ['ve', 'Venezuela', ['Venezuela_mainland']],
+        ['gy', 'Guyana', ['gy']],
+        ['sr', 'Suriname', ['sr']],
+        ['br', 'Brazil', ['Brazil_mainland', 'Brazil_Marajo']],
+        ['gf', 'French Guiana', ['gf']],
+        ['bo', 'Bolivia', ['path2375']],
+        ['cl', 'Chile', ['path6470']],
+        ['ar', 'Argentina', ['path4518']],
+        ['py', 'Paraguay', ['py']],
+        ['uy', 'Uruguay', ['uy']],
+    ],
+}

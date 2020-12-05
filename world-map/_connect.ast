@@ -1,0 +1,120 @@
+# Russia_Kaliningrad is not included
+# West bank is not included
+# Taiwan is not part of China
+# Many smaller island nations are excluded
+# Smaller islands are not included
+# Faulkland islands is not included
+# Hyphens are removed from name
+# Some names are shortend. e.g. Congo
+# Scotland and Waless are part of United Kingdom
+# US Alaska is a 'country'
+# Transnistria is excluded due to its small size.
+# Liechtenstein is excluded due to its small size.
+{
+    'svgname': 'world-map.svg',
+    'extra': [ 'ocean' ],
+    'join': [
+        ['us', 'ca'], # US, canada
+        ['us', 'bs'], # US, bahamas
+        ['us', 'cu'], # US, cuba
+        ['mx', 'cu'], # mexico, cuba
+        ['cu', 'ht'], # cuba, haiti
+        ['cu', 'jm'], # cuba, jamaica
+        ['cu', 'bs'], # cuba, bahamas
+        ['ht', 'bs'], # haiti, bahamas
+        ['jm', 'ht'], # jamaica, haiti
+        ['ht', 'do'], # haiti, dominican republic
+        ['do', 'pr'], # dominican republic, puerto rico
+        ['a_', 'ca'], # alaska, canada
+        ['a_', 'ru'], # alaska, russia
+        ['ca', 'gl'], # canada, greenland
+        ['gl', 'is'], # greenland, iceland
+        ['ie', 'gb'], # ireland, united kingdom
+        ['is', 'gb'], # iceland, united kingdom
+        ['is', 'no'], # iceland, norway
+        ['cl', 'aq'], # chile, antarctica
+        ['za', 'aq'], # south africa, antarctica
+        ['au', 'aq'], # austraila, antarctica
+        ['nz', 'aq'], # new zealand, antarctica
+        ['jp', 'ru'], # japan, russia
+        ['jp', 'kr'], # japan, south korea
+        ['mg', 'mz'], # madagascar, mozambique
+        ['tr', 'cy'], # turkey, cyprus
+        ['lk', 'in'], # sri lanka, india
+        ['th', 'my'], # thailand, malaysia
+        ['my', 'ph'], # malaysia, philippines
+        ['my', 'id'], # malaysia, indonesia
+        ['pg', 'id'], # papau new guinea, indonesia
+        ['id', 'tl'], # indonesia, timor
+        ['au', 'tl'], # australia, timor
+        ['au', 'pg'], # australia, papau new guinea
+        ['au', 'id'], # australia, indonesia
+        ['ph', 'id'], # philippines, indonesia
+        ['au', 'nz'], # australia, new zealand
+        ['au', 'nc'], # australia, new caledonia
+        ['nc', 'vu'], # new caledonia, vanatu
+        ['pg', 'vu'], # papau new guinea, vanatu
+        ['vu', 'fj'], # vanatu, fiji
+        ['fj', 'ws'], # fiji, samoa
+        ['cn', 'tw'], # china, taiwan
+
+        # Norway has an island.
+        ['no', 'fi'], # norway, finland
+        ['se', 'fi'], # sweden, finland
+        ['no', 'se'], # norway, sweden
+
+        # Greece has islands
+        ['gr', 'al'], # greece, albania
+        ['gr', 'mk'], # greece, macedonia
+        ['gr', 'bg'], # greece, bulgaria
+        ['gr', 'tr'], # greece, turkey
+
+        # France has an island
+        ['fr', 'es'], # france, spain
+        ['fr', 'gb'], # france, united kingdom
+        ['fr', 'be'], # france, belgium
+        ['fr', 'lu'], # france, luxembourg
+        ['fr', 'de'], # france, germany
+        ['fr', 'ch'], # france, switzerland
+
+
+
+        # Join North America to South America
+        ['pa', 'co'], # panama, columbia
+
+        # Join Africa to Asia
+        ['eg', 'il'], # egypt, israel
+        ['eg', 'sa'], # egypt, saudi arabia
+        ['dj', 'ye'], # djibouti, yemen
+        #['ps', 'jo'], # palestine, jordan
+
+        # Join Africa to Europe
+        ['es', 'ma'], # spain, morocco
+
+        # Join Europe to Asia
+        ['ru', 'fi'], # russia, finland
+        ['ru', 'ee'], # russia, estonia
+        ['ru', 'lv'], # russia, latvia
+        ['ru', 'by'], # russia, belarus
+        ['ru', 'ua'], # russia, ukraine
+        ['ru', 'xq'], # russia, crimea
+        ['ru', 'ge'], # russia, georgia
+        ['ru', 'az'], # russia, azerbaijan
+        ['ru', 'kz'], # russia, kazakhstan
+        ['ru', 'mn'], # russia, mongolia
+        ['ru', 'cn'], # russia, china
+        ['ru', 'kp'], # russia, north korea
+        ['tr', 'bg'], # turkey, bulgaria
+        ['tr', 'gr'], # turkey, greece
+        ['xq', 'ua'], # crimea, ukraine
+    ],
+    'snip': [
+        ['il', 'sa'], # Israel, Saudi Arabia
+        ['sv', 'ni'], # Nicaragua, El Salvador
+        ['tr', 'az'], # Turkey, Azerbaijan
+        ['pk', 'tj'], # Pakistan, Tajikistan.
+    ],
+    'svgcolors': {
+        'oceanxx': '#d8e8f6',
+    },
+}
