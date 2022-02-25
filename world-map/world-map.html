@@ -1314,7 +1314,7 @@ class Storage {
 
     readConfig() {
         try {
-            return JSON.parse(localStorage.getItem('config'));
+            return JSON.parse(localStorage.getItem('config')) || {};
         } catch (err) {
             return {};
         }
