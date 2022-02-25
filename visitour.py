@@ -829,7 +829,7 @@ class Storage {
 
     readConfig() {
         try {
-            return JSON.parse(localStorage.getItem('config'));
+            return JSON.parse(localStorage.getItem('config')) || {};
         } catch (err) {
             return {};
         }
@@ -1998,7 +1998,7 @@ def generateHtml(tour):
     lines.append("    On the <b>CONFIG</b> panel:<br>")
     lines.append("    <i>Fullname</i>: Complete name must be entered.<br>")
     lines.append("    <i>Connect</i>: Entered name must be a neighbor.<br>")
-    lines.append("    <i>Follow</i>: The name the highlighted element must be entered.<br>")
+    lines.append("    <i>Follow</i>: Name of highlighted element must be entered.<br>")
     lines.append("    <i>Hide</i>: Hides all elements.<br>")
     lines.append("    <br>")
     lines.append("    If <i>Fullname</i> is unselected, partial names may be supplied, but must be long enough to be unambiguous. Mouse over an element to see its name.<br>")

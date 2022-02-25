@@ -298,7 +298,7 @@ class Storage {
 
     readConfig() {
         try {
-            return JSON.parse(localStorage.getItem('config'));
+            return JSON.parse(localStorage.getItem('config')) || {};
         } catch (err) {
             return {};
         }
@@ -1543,7 +1543,7 @@ function shorten_path() {
     On the <b>CONFIG</b> page:<br>
     <i>Fullname</i>: Complete name must be entered. Mouse over a country to see its name.<br>
     <i>Connect</i>: Entered name must be a neighbor.<br>
-    <i>Follow</i>: Name the highlighted country.<br>
+    <i>Follow</i>: Name of highlighted element must be entered.<br>
     <i>Hide</i>: Hide countries.<br>
     <br>
     If <i>Fullname</i> is unselected, partial names may be supplied, but must be long enough to be unambiguous. Niger and Guinea must always end with a space in order to distinguish them from Nigeria and Guinea Biseau.<br>

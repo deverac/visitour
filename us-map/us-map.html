@@ -466,7 +466,7 @@ class Storage {
 
     readConfig() {
         try {
-            return JSON.parse(localStorage.getItem('config'));
+            return JSON.parse(localStorage.getItem('config')) || {};
         } catch (err) {
             return {};
         }
@@ -1808,7 +1808,7 @@ function shorten_path() {
     On the <b>CONFIG</b> panel:<br>
     <i>Fullname</i>: Complete name must be entered.<br>
     <i>Connect</i>: Entered name must be a neighbor.<br>
-    <i>Follow</i>: The name the highlighted element must be entered.<br>
+    <i>Follow</i>: Name of highlighted element must be entered.<br>
     <i>Hide</i>: Hides all elements.<br>
     <br>
     If <i>Fullname</i> is unselected, partial names may be supplied, but must be long enough to be unambiguous. Mouse over an element to see its name.<br>
