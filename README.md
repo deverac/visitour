@@ -5,6 +5,14 @@ them in an HTML file along with their associated names and some Javascript code.
 The Javascript code enables the user to 'navigate' among the embedded SVG
 elements by entering their associated name.
 
+## HTML Samples
+
+Pre-generated [HTML files](https://deverac.github.io/visitour/) may be run in your browser:
+
+  * [World Map](https://deverac.github.io/visitour/html/world-map.html)
+  * [US Map](https://deverac.github.io/visitour/html/us-map.html)
+  * [NATO Alphabet](https://deverac.github.io/visitour/html/nato-alphabet.html)
+
 ## Config Panel
 
 There are three config options which control navigation.
@@ -58,14 +66,6 @@ e.g. `shapes.html?spot=1&timer=0`
 Config values set via query parameters override the config values set via the
 configuration panel.
 
-
-## HTML Samples
-
-Pre-generated HTML files may be downloaded and run in your browser:
-
-  * [NATO Alphabet](nato-alphabet/nato-alphabet.html)
-  * [US Map](us-map/us-map.html)
-  * [World Map](world-map/world-map.html)
 
 ## Keys
 
